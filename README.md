@@ -42,7 +42,7 @@ O **Jogo do Glécio** é uma adaptação digital de uma dinâmica criada pelo pr
 
 ## ⚙️ Tecnologias Utilizadas
 
-[![Repository's technologies](https://skillicons.dev/icons?i=react,nestjs,typescript,mysql,tailwind,vite,vercel,figma)](https://skillicons.dev)
+[![Repository's technologies](https://skillicons.dev/icons?i=react,nestjs,typescript,mysql,prisma,tailwind,vite,vercel,figma)](https://skillicons.dev)
 
 ## 🛠️ Como Rodar Localmente
 
