@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background-color: var(--skeleton-loading-base);
+}
+::-webkit-scrollbar-thumb {
+    background-color: var(--skeleton-loading-highlight);
+    border-radius: 0.5rem;
+}
+
 :root {
     --purple: #b386ff;
     --purple-seconday: #8e4dff;
@@ -27,9 +38,13 @@
 html,
 body {
     font-family: "Inter", sans-serif;
-    background-color: var(--white);
     color: var(--purple-gray);
     height: 100%;
+     background:
+        radial-gradient(var(--skeleton-loading-highlight) 1px, transparent 1px),
+        var(--white);
+
+    background-size: 22px 22px;
 }
 
 .no-scroll {
@@ -74,4 +89,46 @@ body {
     100% {
         transform: translateY(0) rotate(0);
     }
+}
+
+@keyframes glowPulseGold {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.4));
+    }
+    50% {
+        filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.9));
+    }
+}
+
+@keyframes glowPulseSilver {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 4px rgba(192, 192, 192, 0.4));
+    }
+    50% {
+        filter: drop-shadow(0 0 10px rgba(192, 192, 192, 0.9));
+    }
+}
+
+@keyframes glowPulseBronze {
+    0%,
+    100% {
+        filter: drop-shadow(0 0 4px rgba(205, 127, 50, 0.4));
+    }
+    50% {
+        filter: drop-shadow(0 0 10px rgba(205, 127, 50, 0.9));
+    }
+}
+
+.animate-glow-gold {
+    animation: glowPulseGold 1.6s ease-in-out infinite;
+}
+
+.animate-glow-silver {
+    animation: glowPulseSilver 1.6s ease-in-out infinite;
+}
+
+.animate-glow-bronze {
+    animation: glowPulseBronze 1.6s ease-in-out infinite;
 }
