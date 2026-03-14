@@ -6,7 +6,7 @@ import { scrollFromRight } from "../animations/pageAnimations";
 import ButtonPageBack from "../components/buttons/ButtonPageBack";
 
 function Ranking() {
-    document.title = "Ranking · Jogo do Glécio"
+    document.title = "Ranking · Jogo do Glécio";
 
     const navigate = useNavigate();
 
@@ -36,7 +36,7 @@ function Ranking() {
                 document.body.classList.remove("no-scroll")
             }
         >
-            <ButtonPageBack to="/" absolute={true}>
+            <ButtonPageBack to={-1} absolute={true}>
                 Retornar
             </ButtonPageBack>
             <RankingList />
