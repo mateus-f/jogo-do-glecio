@@ -9,10 +9,10 @@ const AvatarSelector = ({
     label,
     avatarsList,
     selectedAvatarIndex,
-    onSelect,   src={SelectedIndicator}
+    onSelect,
 }) => {
     const [selectedAvatar, setSelectedAvatar] = useState(
-        selectedAvatarIndex ?? 1
+        selectedAvatarIndex ?? null
     );
     const [showGradientEnd, setShowGradientEnd] = useState(true);
     const [showGradientStart, setShowGradientStart] = useState(false);
@@ -20,16 +20,40 @@ const AvatarSelector = ({
 
     const isLoading = !avatarsList || avatarsList.length === 0;
 
+    // 1. Sincroniza a seleção quando a prop externa muda
     useEffect(() => {
-        // Sincroniza seleção quando a prop muda
         if (selectedAvatarIndex !== undefined) {
             setSelectedAvatar(selectedAvatarIndex);
         }
     }, [selectedAvatarIndex]);
 
+    // 2. Lógica de Scroll Automático para o item selecionado
+    useEffect(() => {
+        if (!isLoading && selectedAvatar && containerRef.current) {
+            // O timeout garante que o DOM já foi renderizado antes de buscar o elemento
+            const timeoutId = setTimeout(() => {
+                const selectedElement = containerRef.current.querySelector(
+                    `[data-id="avatar-${selectedAvatar}"]`
+                );
+
+                if (selectedElement) {
+                    selectedElement.scrollIntoView({
+                        behavior: "smooth",
+                        block: "nearest", // Evita scroll vertical indesejado na página
+                        inline: "center",  // Centraliza o avatar no container horizontal
+                    });
+                }
+            }, 100);
+
+            return () => clearTimeout(timeoutId);
+        }
+    }, [selectedAvatar, isLoading]);
+
+    // 3. Monitora o scroll manual para exibir/esconder os gradientes laterais
     useEffect(() => {
         const handleScroll = () => {
             const container = containerRef.current;
+            if (!container) return;
 
             const isAtEnd =
                 container.scrollLeft + container.offsetWidth >=
@@ -43,9 +67,11 @@ const AvatarSelector = ({
         const container = containerRef.current;
         if (container) {
             container.addEventListener("scroll", handleScroll);
+            // Executa uma vez no mount para definir estado inicial
+            handleScroll(); 
             return () => container.removeEventListener("scroll", handleScroll);
         }
-    }, []);
+    }, [isLoading]);
 
     const scrollContainer = (direction) => {
         const container = containerRef.current;
@@ -65,68 +91,78 @@ const AvatarSelector = ({
 
     return (
         <div className="relative">
-            <div className="flex justify-between">
-                <span className="text-darkGray text-sm">{label}</span>
-                <div className="flex justify-between gap-1 max-sm:hidden">
+            <div className="flex justify-between items-center mb-2">
+                <span className="text-darkGray text-sm font-medium">{label}</span>
+                <div className="flex justify-between gap-2 max-sm:hidden">
                     <HiMiniChevronLeft
-                        className="w-5 h-5 cursor-pointer hover:scale-125 transition-all ease-out"
+                        className="w-6 h-6 cursor-pointer hover:scale-125 transition-all text-gray-600"
                         onClick={() => scrollContainer("left")}
                     />
                     <HiMiniChevronRight
-                        className="w-5 h-5 cursor-pointer hover:scale-125 transition-all ease-out"
+                        className="w-6 h-6 cursor-pointer hover:scale-125 transition-all text-gray-600"
                         onClick={() => scrollContainer("right")}
                     />
                 </div>
             </div>
-            <div
-                ref={containerRef}
-                className="flex overflow-x-scroll whitespace-nowrap mt-1 h-[70px] overflow-y-hidden scrollbar-hide"
-            >
-                {isLoading ? (
-                    <SkeletonTheme
-                        baseColor="var(--skeleton-loading-base)"
-                        highlightColor="var(--skeleton-loading-highlight)"
-                    >
-                        {Array.from({ length: 50 }).map((_, index) => (
-                            <Skeleton
-                                key={index}
-                                circle
-                                width={64}
-                                height={64}
-                                style={{ marginRight: "12px" }}
-                            />
-                        ))}
-                    </SkeletonTheme>
-                ) : (
-                    avatarsList.map((avatar) => (
-                        <span
-                            key={avatar.id}
-                            onClick={() => handleAvatarClick(avatar.id)}
-                            className="w-16 h-16 flex-none mr-3 cursor-pointer relative"
+
+            <div className="relative group">
+                <div
+                    ref={containerRef}
+                    className="flex overflow-x-auto whitespace-nowrap h-[75px] items-center scrollbar-hide scroll-smooth"
+                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                    {isLoading ? (
+                        <SkeletonTheme
+                            baseColor="var(--skeleton-loading-base)"
+                            highlightColor="var(--skeleton-loading-highlight)"
                         >
-                            <img
-                                className="h-full w-full rounded-full bg-skeletonLoadingBase object-cover select-none"
-                                src={avatar.path_256px}
-                                alt={`Avatar ${avatar.id}`}
-                            />
-                            {selectedAvatar === avatar.id && (
-                                <img
-                                    src={SelectedIndicator}
-                                    alt="Selected"
-                                    className="absolute w-16 h-16 top-0 left-0 pointer-events-none select-none"
+                            {Array.from({ length: 15 }).map((_, index) => (
+                                <Skeleton
+                                    key={index}
+                                    circle
+                                    width={64}
+                                    height={64}
+                                    className="mr-3"
                                 />
-                            )}
-                        </span>
-                    ))
+                            ))}
+                        </SkeletonTheme>
+                    ) : (
+                        avatarsList.map((avatar) => (
+                            <div
+                                key={avatar.id}
+                                data-id={`avatar-${avatar.id}`} // Identificador para o scroll
+                                onClick={() => handleAvatarClick(avatar.id)}
+                                className="w-16 h-16 flex-none mr-3 cursor-pointer relative transition-transform active:scale-95"
+                            >
+                                <img
+                                    className={`h-full w-full rounded-full bg-gray-100 object-cover select-none border-2 ${
+                                        selectedAvatar === avatar.id ? 'border-primary' : 'border-transparent'
+                                    }`}
+                                    src={avatar.path_256px}
+                                    alt={`Avatar ${avatar.id}`}
+                                />
+                                {selectedAvatar === avatar.id && (
+                                    <img
+                                        src={SelectedIndicator}
+                                        alt="Selected"
+                                        className="absolute w-full h-full top-0 left-0 pointer-events-none select-none z-10"
+                                    />
+                                )}
+                            </div>
+                        ))
+                    )}
+                </div>
+
+                {/* Gradientes de indicação de scroll */}
+                {showGradientStart && (
+                    <div className="absolute top-0 left-0 h-full w-12 pointer-events-none bg-gradient-to-l from-transparent to-white z-20" />
+                )}
+                {showGradientEnd && (
+                    <div className="absolute top-0 right-0 h-full w-12 pointer-events-none bg-gradient-to-r from-transparent to-white z-20" />
                 )}
             </div>
-            {showGradientEnd && (
-                <div className="absolute top-4 right-0 h-full w-[20%] pointer-events-none bg-gradient-to-r from-transparent to-white" />
-            )}
-            {showGradientStart && (
-                <div className="absolute top-4 left-0 h-full w-[10%] pointer-events-none bg-gradient-to-l from-transparent to-white" />
-            )}
         </div>
     );
 };
+
 export default AvatarSelector;
