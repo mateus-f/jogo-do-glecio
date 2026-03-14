@@ -14,6 +14,7 @@ import { logoutUser } from "../services/authService";
 import { getUser } from "../services/userService";
 import { isTokenExpiringSoon } from "../utils/authUtils";
 import { getLocalUserInfo } from "../utils/userUtils";
+import { Howler } from "howler";
 
 function Home() {
     document.title = "Início · Jogo do Glécio";
@@ -167,12 +168,21 @@ function Home() {
                             ter você aqui!
                         </p>
                         <div className="flex gap-3 max-sm:flex-col">
-                            <Link to="/play" className="w-full">
-                                <ButtonSuccess invertedContent={true}>
-                                    <HiOutlinePlay className="w-6 h-6" />
-                                    Jogar agora!
-                                </ButtonSuccess>
-                            </Link>
+                            <ButtonSuccess
+                                onClick={() => {
+                                    if (
+                                        Howler.ctx &&
+                                        Howler.ctx.state === "suspended"
+                                    ) {
+                                        Howler.ctx.resume();
+                                    }
+                                    navigate("/play");
+                                }}
+                                invertedContent={true}
+                            >
+                                <HiOutlinePlay className="w-6 h-6" />
+                                Jogar agora!
+                            </ButtonSuccess>
                             {windowWidth < 768 && (
                                 <Link to="/ranking" className="w-full">
                                     <ButtonSupport invertedContent={true}>
