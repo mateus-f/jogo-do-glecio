@@ -13,7 +13,7 @@ const ButtonSuccess = ({
 			type={type}
 			onClick={onClick}
 			disabled={disabled || isLoading}
-			className={`relative block w-full p-[2px] rounded-lg bg-gradient-to-b from-[#0C961D] to-[#0B8319] hover:brightness-110 transition-all duration-300 ease-in-out ${
+			className={`relative block w-full p-[2px] drop-shadow-md rounded-lg bg-gradient-to-b from-[#0C961D] to-[#0B8319] hover:brightness-110 transition-all duration-300 ease-in-out ${
 				disabled
 					? "opacity-70 cursor-not-allowed"
 					: isLoading
