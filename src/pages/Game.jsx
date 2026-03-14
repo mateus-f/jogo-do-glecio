@@ -8,355 +8,372 @@ import { scrollFromRight } from "../animations/pageAnimations";
 import Modal from "../components/Modal";
 import { useOverlay } from "../contexts/TimerOverlayProvider";
 import { setRanking } from "../services/rankingService";
+import { Howl } from "howler";
 
 import greenHappyFace from "../assets/images/elements/green-happy-face.svg";
 import redSadFace from "../assets/images/elements/red-sad-face.svg";
+import correctSound from "../assets/sounds/correct.mp3";
+import wrongSound from "../assets/sounds/wrong.mp3";
+import timerSound from "../assets/sounds/timer.mp3";
+import alarmSound from "../assets/sounds/alarm.mp3";
 
 function Game() {
-	document.title = "Tabuada · Jogo do Glécio";
+    document.title = "Tabuada · Jogo do Glécio";
 
-	const [showModal, setShowModal] = useState(false);
-	const [showConfettiInResultPage, setShowConfettiInResultPage] =
-		useState(false);
-	const [multiplicationScaleAnimation, setMultiplicationScaleAnimation] =
-		useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [showConfettiInResultPage, setShowConfettiInResultPage] =
+        useState(false);
+    const [multiplicationScaleAnimation, setMultiplicationScaleAnimation] =
+        useState(false);
 
-	const [progress, setProgress] = useState(100);
-	const [isRunning, setIsRunning] = useState(true);
+    const [progress, setProgress] = useState(100);
+    const [isRunning, setIsRunning] = useState(true);
 
-	const navigate = useNavigate();
+    const navigate = useNavigate();
 
-	const [userResponse, setUserResponse] = useState("");
-	const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
-	const [wrongAnswersCount, setWrongAnswersCount] = useState(0);
-	const [lastMultiplication, setLastMultiplication] = useState({
-		multiplication: "",
-	});
-	const [currentMultiplication, setCurrentMultiplication] = useState({
-		multiplication: "0 x 0",
-	});
+    const [userResponse, setUserResponse] = useState("");
+    const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
+    const [wrongAnswersCount, setWrongAnswersCount] = useState(0);
+    const [lastMultiplication, setLastMultiplication] = useState({
+        multiplication: "",
+    });
+    const [currentMultiplication, setCurrentMultiplication] = useState({
+        multiplication: "0 x 0",
+    });
 
-	const { showTimerOverlay } = useOverlay();
+    const [timerSoundPlayed, setTimerSoundPlayed] = useState(false);
 
-	const handleModalConfirm = () => {
-		navigate("/", { replace: true });
-	};
+    const correctSoundEffect = new Howl({
+        src: [correctSound],
+        volume: 1,
+    });
+    const wrongSoundEffect = new Howl({
+        src: [wrongSound],
+        volume: 1.2,
+    });
+    const timerSoundEffect = new Howl({
+        src: timerSound,
+        volume: 0.8,
+    });
+    const alarmSoundEffect = new Howl({
+        src: alarmSound,
+        volume: 0.8,
+    });
 
-	const checkIfUserIsCorrect = () => {
-		if (parseInt(userResponse) === currentMultiplication.result) {
-			setCorrectAnswersCount((prev) => prev + 1);
-		} else {
-			setWrongAnswersCount((prev) => prev + 1);
-		}
+    const { showTimerOverlay } = useOverlay();
 
-		setLastMultiplication(currentMultiplication);
+    const handleModalConfirm = () => {
+        navigate("/", { replace: true });
+    };
 
-		generateNewMultiplication();
-		setUserResponse("");
-	};
+    const checkIfUserIsCorrect = () => {
+        if (parseInt(userResponse) === currentMultiplication.result) {
+            setCorrectAnswersCount((prev) => prev + 1);
+            correctSoundEffect.play();
+        } else {
+            wrongSoundEffect.play();
+            setWrongAnswersCount((prev) => prev + 1);
+        }
 
-	const generateNewMultiplication = () => {
-		let firstNumber, secondNumber;
-		let newMultiplication;
+        setLastMultiplication(currentMultiplication);
 
-		do {
-			firstNumber = Math.floor(Math.random() * 8) + 2;
-			secondNumber = Math.floor(Math.random() * 9) + 1;
-			newMultiplication = `${firstNumber} x ${secondNumber}`;
-		} while (newMultiplication === lastMultiplication?.multiplication);
+        generateNewMultiplication();
+        setUserResponse("");
+    };
 
-		setCurrentMultiplication({
-			multiplication: newMultiplication,
-			result: firstNumber * secondNumber,
-		});
+    const generateNewMultiplication = () => {
+        let firstNumber, secondNumber;
+        let newMultiplication;
 
-		setMultiplicationScaleAnimation(true);
-		let timer = setTimeout(() => {
-			setMultiplicationScaleAnimation(false);
-		}, 200);
+        do {
+            firstNumber = Math.floor(Math.random() * 8) + 2;
+            secondNumber = Math.floor(Math.random() * 9) + 1;
+            newMultiplication = `${firstNumber} x ${secondNumber}`;
+        } while (newMultiplication === lastMultiplication?.multiplication);
 
-		return () => clearTimeout(timer);
-	};
+        setCurrentMultiplication({
+            multiplication: newMultiplication,
+            result: firstNumber * secondNumber,
+        });
 
-	const handleNumericButtonClick = (num) => {
-		if (userResponse.length < 4) {
-			setUserResponse((prev) => `${prev}${num}`);
-		}
-	};
+        setMultiplicationScaleAnimation(true);
+        let timer = setTimeout(() => {
+            setMultiplicationScaleAnimation(false);
+        }, 200);
 
-	const setRankingScore = async (score) => {
-		try {
-			const response = await setRanking(score);
+        return () => clearTimeout(timer);
+    };
 
-			if (response.status_code === 201) {
-				console.info("Pontos enviados para o ranking");
-			}
-		} catch (error) {
-			toast.error(error.message || "Erro ao enviar pontos para o ranking", {
-				className: "bg-white",
-			});
-		}
-	};
+    const handleNumericButtonClick = (num) => {
+        if (userResponse.length < 4) {
+            setUserResponse((prev) => `${prev}${num}`);
+        }
+    };
 
-	useEffect(() => {
-		let timer;
+    const setRankingScore = async (score) => {
+        try {
+            const response = await setRanking(score);
 
-		if (isRunning && !showModal && progress > 0) {
-			timer = setInterval(() => {
-				setProgress((prev) => Math.max(prev - 1.67, 0));
-			}, 1000);
-		}
+            if (response.status_code === 201) {
+                console.info("Pontos enviados para o ranking");
+            }
+        } catch (error) {
+            toast.error(
+                error.message || "Erro ao enviar pontos para o ranking",
+                {
+                    className: "bg-white",
+                },
+            );
+        }
+    };
 
-		return () => clearInterval(timer);
-	}, [progress, showModal, isRunning]);
+    useEffect(() => {
+        let timer;
 
-	useEffect(() => {
-		if (progress === 0) {
-			showTimerOverlay();
+        if (isRunning && !showModal && progress > 0) {
+            timer = setInterval(() => {
+                setProgress((prev) => Math.max(prev - 1.67, 0));
+            }, 1000);
+        }
 
-			if (
-				correctAnswersCount > parseInt(localStorage.getItem("MAX_SCORE") || "0")
-			) {
-				localStorage.setItem("MAX_SCORE", correctAnswersCount);
-				setShowConfettiInResultPage(true);
-			}
+        return () => clearInterval(timer);
+    }, [progress, showModal, isRunning]);
 
-			const timer = setTimeout(() => {
-				console.log("show confetti", showConfettiInResultPage);
+    useEffect(() => {
+        if (progress === 0) {
+            showTimerOverlay();
+            alarmSoundEffect.play();
 
-				navigate("/results", {
-					state: {
-						correctAnswers: correctAnswersCount,
-						wrongAnswers: wrongAnswersCount,
-						showConfetti: showConfettiInResultPage,
-					},
-				});
-			}, 1000);
+            if (
+                correctAnswersCount >
+                parseInt(localStorage.getItem("MAX_SCORE") || "0")
+            ) {
+                localStorage.setItem("MAX_SCORE", correctAnswersCount);
+                setShowConfettiInResultPage(true);
+            }
 
-			setRankingScore(correctAnswersCount);
+            const timer = setTimeout(() => {
+                navigate("/results", {
+                    state: {
+                        correctAnswers: correctAnswersCount,
+                        wrongAnswers: wrongAnswersCount,
+                        showConfetti: showConfettiInResultPage,
+                    },
+                });
+            }, 1000);
 
-			return () => clearTimeout(timer);
-		}
-	}, [
-		progress,
-		showTimerOverlay,
-		correctAnswersCount,
-		wrongAnswersCount,
-		showConfettiInResultPage,
-		navigate,
-	]);
+            setRankingScore(correctAnswersCount);
 
-	useEffect(() => {
-		const handleVisibilityChange = () => {
-			setIsRunning(!document.hidden);
-		};
+            return () => clearTimeout(timer);
+        }
+    }, [
+        progress,
+        showTimerOverlay,
+        correctAnswersCount,
+        wrongAnswersCount,
+        showConfettiInResultPage,
+        navigate,
+    ]);
 
-		document.addEventListener("visibilitychange", handleVisibilityChange);
+    useEffect(() => {
+        if (progress <= 10 && progress > 0 && !timerSoundPlayed) {
+            timerSoundEffect.play();
+            setTimerSoundPlayed(true);
+        }
+    }, [progress, timerSoundPlayed]);
 
-		return () =>
-			document.removeEventListener("visibilitychange", handleVisibilityChange);
-	}, []);
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            setIsRunning(!document.hidden);
+        };
 
-	useEffect(() => {
-		const handleKeyDown = (e) => {
-			const numberKey = parseInt(e.key);
+        document.addEventListener("visibilitychange", handleVisibilityChange);
 
-			if (progress != 0) {
-				if (!isNaN(numberKey)) {
-					setUserResponse((prev) => `${prev}${numberKey}`);
-				}
+        return () =>
+            document.removeEventListener(
+                "visibilitychange",
+                handleVisibilityChange,
+            );
+    }, []);
 
-				if (e.key === "Enter") {
-					checkIfUserIsCorrect();
-				}
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            const numberKey = parseInt(e.key);
 
-				if (e.key === "Backspace") {
-					setUserResponse((prev) => prev.slice(0, -1));
-				}
-			}
-		};
+            if (progress != 0) {
+                if (!isNaN(numberKey)) {
+                    setUserResponse((prev) => `${prev}${numberKey}`);
+                }
 
-		document.body.addEventListener("keydown", handleKeyDown);
+                if (e.key === "Enter") {
+                    checkIfUserIsCorrect();
+                }
 
-		return () => {
-			document.body.removeEventListener("keydown", handleKeyDown);
-		};
-	}, [checkIfUserIsCorrect, userResponse, progress]);
+                if (e.key === "Backspace") {
+                    setUserResponse((prev) => prev.slice(0, -1));
+                }
+            }
+        };
 
-	useEffect(() => {
-		generateNewMultiplication();
-	}, []);
+        document.body.addEventListener("keydown", handleKeyDown);
 
-	return (
-		<motion.div
-			initial="initial"
-			animate="animate"
-			exit="exit"
-			variants={scrollFromRight()}
-		>
-			<span
-				onClick={() => setShowModal(true)}
-				className="flex cursor-pointer text-darkPurple items-center font-medium absolute top-8 left-14 max-sm:left-4"
-			>
-				<HiMiniChevronLeft size={24} />
-				Retornar
-			</span>
-			<main className="pt-20 p-6 max-w-6xl mx-auto">
-				{/* Barra de progresso */}
-				<div className="w-full h-5 mb-20 bg-skeletonLoadingBase rounded-full max-[580px]:mb-10 overflow-hidden">
-					<div
-						className="h-5 bg-darkPurple rounded-full"
-						style={{
-							width: `${progress}%`,
-							transition: "width 1s linear",
-						}}
-					></div>
-				</div>
+        return () => {
+            document.body.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [checkIfUserIsCorrect, userResponse, progress]);
 
-				{/* Conteúdo */}
-				<div className="flex justify-between gap-10 max-lg:gap-5 max-[580px]:flex-col">
-					{/* Multiplicação e acertos/erros */}
-					<div className="flex flex-col justify-between w-[480px] max-[580px]:w-full">
-						<p
-							className={`text-[192px] font-black text-darkPurple text-center max-lg:text-[160px] max-[810px]:text-9xl max-sm:text-8xl h-full aling max-[580px]:mb-10 transition-scale duration-150 ease-in-out ${
-								multiplicationScaleAnimation ? "scale-105" : "scale-100"
-							}`}
-						>
-							{currentMultiplication.multiplication}
-						</p>
-						<div className="flex justify-evenly gap-4 max-[580px]:justify-between">
-							<div className="flex gap-2 items-center">
-								<img
-									src={greenHappyFace}
-									alt={`${greenHappyFace}'s image`}
-									className="pointer-events-none select-none h-16 max-sm:h-12 max-[580px]:h-10    "
-								/>
-								<div className="flex flex-col">
-									<span className="text-greenColor font-extrabold text-2xl leading-4 max-[580px]:text-xl max-[580px]:leading-3">
-										{correctAnswersCount}
-									</span>
-									<span className="font-medium text-darkGray text-lg max-[580px]:text-base">
-										Acertos
-									</span>
-								</div>
-							</div>
-							<div className="flex gap-2 items-center">
-								<img
-									src={redSadFace}
-									alt={`${redSadFace}'s image`}
-									className="pointer-events-none select-none h-16 max-sm:h-12 max-[580px]:h-10"
-								/>
-								<div className="flex flex-col">
-									<span className="text-redColor font-extrabold text-2xl leading-4 max-[580px]:text-xl max-[580px]:leading-3">
-										{wrongAnswersCount}
-									</span>
-									<span className="font-medium text-darkGray text-lg max-[580px]:text-base">
-										Erros
-									</span>
-								</div>
-							</div>
-						</div>
-					</div>
+    useEffect(() => {
+        generateNewMultiplication();
+    }, []);
 
-					{/* Teclado */}
-					<div className="max-w-[450px] max-[580px]:max-w-full">
-						<input
-							className="w-full text-lg text-purpleDarkGray font-medium p-4 border border-grayColor outline-none bg-transparent rounded-xl mb-2 max-[580px]:p-3"
-							disabled
-							type="text"
-							maxLength={3}
-							value={userResponse}
-						/>
-						<div className="grid grid-cols-[repeat(3,112px)] auto-rows-[72px] gap-2 max-md:grid-cols-[repeat(3,80px)] max-md:auto-rows-[64px] max-[580px]:grid-cols-[repeat(3,1fr)] max-[580px]:auto-rows-[9vh]">
-							<button
-								className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 transition-all ease-in-out"
-								onClick={() => handleNumericButtonClick("1")}
-							>
-								1
-							</button>
-							<button
-								className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 transition-all ease-in-out"
-								onClick={() => handleNumericButtonClick("2")}
-							>
-								2
-							</button>
-							<button
-								className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 transition-all ease-in-out"
-								onClick={() => handleNumericButtonClick("3")}
-							>
-								3
-							</button>
-							<button
-								className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 transition-all ease-in-out"
-								onClick={() => handleNumericButtonClick("4")}
-							>
-								4
-							</button>
-							<button
-								className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 transition-all ease-in-out"
-								onClick={() => handleNumericButtonClick("5")}
-							>
-								5
-							</button>
-							<button
-								className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 transition-all ease-in-out"
-								onClick={() => handleNumericButtonClick("6")}
-							>
-								6
-							</button>
-							<button
-								className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 transition-all ease-in-out"
-								onClick={() => handleNumericButtonClick("7")}
-							>
-								7
-							</button>
-							<button
-								className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 transition-all ease-in-out"
-								onClick={() => handleNumericButtonClick("8")}
-							>
-								8
-							</button>
-							<button
-								className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 transition-all ease-in-out"
-								onClick={() => handleNumericButtonClick("9")}
-							>
-								9
-							</button>
-							<button
-								className="w-full h-full bg-redColor rounded-xl text-white flex items-center justify-center shadow-sm hover:scale-95 transition-all ease-in-out"
-								onClick={() => setUserResponse((prev) => prev.slice(0, -1))}
-							>
-								<Delete className="w-10 h-10" />
-							</button>
-							<button
-								className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 transition-all ease-in-out"
-								onClick={() => handleNumericButtonClick("0")}
-							>
-								0
-							</button>
-							<button
-								className="w-full h-full bg-greenColor rounded-xl text-white flex items-center justify-center shadow-sm hover:scale-95 transition-all ease-in-out"
-								onClick={() => checkIfUserIsCorrect()}
-							>
-								<ArrowRight className="w-10 h-10" />
-							</button>
-						</div>
-					</div>
-				</div>
-			</main>
+    return (
+        <motion.div
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            variants={scrollFromRight()}
+        >
+            <span
+                onClick={() => setShowModal(true)}
+                className="flex cursor-pointer text-darkPurple items-center font-medium absolute top-8 left-14 max-sm:left-4 max-sm:top-4 z-10"
+            >
+                <HiMiniChevronLeft size={24} />
+                Retornar
+            </span>
 
-			<AnimatePresence mode="wait">
-				{showModal && (
-					<Modal
-						title="Tem certeza que deseja sair?"
-						message="Todo seu progresso será perdido."
-						confirmText="Sair"
-						onConfirm={handleModalConfirm}
-						onCancel={() => setShowModal(false)}
-					/>
-				)}
-			</AnimatePresence>
-		</motion.div>
-	);
+            {/* main mantém as classes originais pro desktop. No mobile, usamos min-h-[100dvh] e flex-col para forçar os itens pro fundo */}
+            <main className="pt-20 p-6 max-w-6xl mx-auto max-[580px]:pt-16 max-[580px]:p-4 max-[580px]:flex max-[580px]:flex-col max-[580px]:min-h-[100dvh]">
+                {/* Barra de progresso */}
+                <div className="w-full h-5 mb-20 bg-skeletonLoadingBase rounded-full max-[580px]:mb-4 max-[580px]:shrink-0 overflow-hidden">
+                    <div
+                        className="h-5 bg-darkPurple rounded-full"
+                        style={{
+                            width: `${progress}%`,
+                            transition: "width 1s linear",
+                        }}
+                    ></div>
+                </div>
+
+                {/* Conteúdo: Mantém justify-between row no desktop, e vira uma coluna que preenche o espaço restante (flex-1) no celular */}
+                <div className="flex justify-between gap-10 max-lg:gap-5 max-[580px]:flex-col max-[580px]:flex-1 max-[580px]:gap-2">
+                    {/* Multiplicação e acertos/erros */}
+                    <div className="flex flex-col justify-between w-[480px] max-[580px]:w-full max-[580px]:flex-1">
+                        {/* A Conta: No mobile usamos flex-1 para ela crescer o máximo possível, empurrando Acertos/Erros para baixo */}
+                        <p
+                            className={`text-[192px] font-black text-darkPurple text-center max-lg:text-[160px] max-[810px]:text-9xl max-sm:text-8xl h-full aling max-[580px]:flex-1 max-[580px]:flex max-[580px]:items-center max-[580px]:justify-center max-[580px]:mb-2 transition-scale duration-150 ease-in-out ${
+                                multiplicationScaleAnimation
+                                    ? "scale-105"
+                                    : "scale-100"
+                            }`}
+                        >
+                            {currentMultiplication.multiplication}
+                        </p>
+
+                        <div className="flex justify-evenly gap-4 max-[580px]:justify-between max-[580px]:pb-2">
+                            <div className="flex gap-2 items-center">
+                                <img
+                                    src={greenHappyFace}
+                                    alt={`${greenHappyFace}'s image`}
+                                    className="pointer-events-none select-none h-16 max-sm:h-12 max-[580px]:h-10"
+                                />
+                                <div className="flex flex-col">
+                                    <span className="text-greenColor font-extrabold text-2xl leading-4 max-[580px]:text-xl max-[580px]:leading-3">
+                                        {correctAnswersCount}
+                                    </span>
+                                    <span className="font-medium text-darkGray text-lg max-[580px]:text-base">
+                                        Acertos
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="flex gap-2 items-center">
+                                <img
+                                    src={redSadFace}
+                                    alt={`${redSadFace}'s image`}
+                                    className="pointer-events-none select-none h-16 max-sm:h-12 max-[580px]:h-10"
+                                />
+                                <div className="flex flex-col">
+                                    <span className="text-redColor font-extrabold text-2xl leading-4 max-[580px]:text-xl max-[580px]:leading-3">
+                                        {wrongAnswersCount}
+                                    </span>
+                                    <span className="font-medium text-darkGray text-lg max-[580px]:text-base">
+                                        Erros
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Teclado: Isolamos o pb-6 aqui pro celular pra nunca colar na borda de baixo da tela */}
+                    <div className="max-w-[450px] max-[580px]:max-w-full max-[580px]:w-full max-[580px]:pb-6 max-[580px]:shrink-0">
+                        <input
+                            className="w-full text-lg text-purpleDarkGray font-medium p-4 border border-grayColor outline-none bg-transparent rounded-xl mb-2 max-[580px]:p-3"
+                            disabled
+                            type="text"
+                            maxLength={3}
+                            value={userResponse}
+                        />
+                        {/* Reduzi o auto-rows no mobile de 9vh para 8.5vh para dar uma margem de segurança contra cortes */}
+                        <div className="grid grid-cols-[repeat(3,112px)] auto-rows-[72px] gap-2 max-md:grid-cols-[repeat(3,80px)] max-md:auto-rows-[64px] max-[580px]:grid-cols-[repeat(3,1fr)] max-[580px]:auto-rows-[8.5vh]">
+                            {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map(
+                                (num) => (
+                                    <button
+                                        key={num}
+                                        className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
+                                        onPointerDown={(e) => {
+                                            e.preventDefault();
+                                            handleNumericButtonClick(num);
+                                        }}
+                                    >
+                                        {num}
+                                    </button>
+                                ),
+                            )}
+                            <button
+                                className="w-full h-full bg-redColor rounded-xl text-white flex items-center justify-center shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
+                                onPointerDown={(e) => {
+                                    e.preventDefault();
+                                    setUserResponse((prev) =>
+                                        prev.slice(0, -1),
+                                    );
+                                }}
+                            >
+                                <Delete className="w-10 h-10" />
+                            </button>
+                            <button
+                                className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
+                                onPointerDown={(e) => {
+                                    e.preventDefault();
+                                    handleNumericButtonClick("0");
+                                }}
+                            >
+                                0
+                            </button>
+                            <button
+                                className="w-full h-full bg-greenColor rounded-xl text-white flex items-center justify-center shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
+                                onPointerDown={(e) => {
+                                    e.preventDefault();
+                                    checkIfUserIsCorrect();
+                                }}
+                            >
+                                <ArrowRight className="w-10 h-10" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <AnimatePresence mode="wait">
+                {showModal && (
+                    <Modal
+                        title="Tem certeza que deseja sair?"
+                        message="Todo seu progresso será perdido."
+                        confirmText="Sair"
+                        onConfirm={handleModalConfirm}
+                        onCancel={() => setShowModal(false)}
+                    />
+                )}
+            </AnimatePresence>
+        </motion.div>
+    );
 }
 export default Game;
