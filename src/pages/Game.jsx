@@ -49,7 +49,7 @@ function Game() {
     });
     const wrongSoundEffect = new Howl({
         src: [wrongSound],
-        volume: 1.2,
+        volume: 1,
     });
     const timerSoundEffect = new Howl({
         src: timerSound,
@@ -306,7 +306,7 @@ function Game() {
                     {/* Teclado: Isolamos o pb-6 aqui pro celular pra nunca colar na borda de baixo da tela */}
                     <div className="max-w-[450px] max-[580px]:max-w-full max-[580px]:w-full max-[580px]:pb-6 max-[580px]:shrink-0">
                         <input
-                            className="w-full text-lg text-purpleDarkGray font-medium p-4 border border-grayColor outline-none bg-transparent rounded-xl mb-2 max-[580px]:p-3"
+                            className="w-full text-lg text-purpleDarkGray drop-shadow-md font-medium p-4 border border-grayColor outline-none bg-transparent rounded-xl mb-2 max-[580px]:p-3"
                             disabled
                             type="text"
                             maxLength={3}
@@ -318,7 +318,7 @@ function Game() {
                                 (num) => (
                                     <button
                                         key={num}
-                                        className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
+                                        className="w-full h-full bg-darkPurple drop-shadow-md rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
                                         onPointerDown={(e) => {
                                             e.preventDefault();
                                             handleNumericButtonClick(num);
