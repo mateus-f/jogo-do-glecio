@@ -15,6 +15,7 @@ import { getUser } from "../services/userService";
 import { isTokenExpiringSoon } from "../utils/authUtils";
 import { getLocalUserInfo } from "../utils/userUtils";
 import { Howler } from "howler";
+import Cookies from "js-cookie";
 
 function Home() {
     document.title = "Início · Jogo do Glécio";
@@ -29,10 +30,10 @@ function Home() {
     const [mobileDropDown, setMobileDropDown] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem("ACCESS_TOKEN");
+        const token = Cookies.get("token");
 
         if (!token || isTokenExpiringSoon(token)) {
-            localStorage.removeItem("ACCESS_TOKEN");
+            Cookies.remove("token");
             navigate("/login", { replace: true });
         }
     }, [navigate]);

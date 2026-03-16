@@ -10,6 +10,7 @@ import { createUser } from "../services/authService";
 import { getAvatarsList, getCoursesList } from "../services/userService";
 import { toast } from "react-toastify";
 import ButtonPageBack from "../components/buttons/ButtonPageBack";
+import Cookies from "js-cookie";
 
 function Register() {
     document.title = "Criar perfil · Jogo do Glécio";
@@ -32,7 +33,7 @@ function Register() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (localStorage.getItem("ACCESS_TOKEN")) {
+        if (Cookies.get("token")) {
             navigate("/", { replace: true });
         }
     }, [navigate]);
@@ -55,7 +56,7 @@ function Register() {
                         "Ocorreu um erro ao carregar a lista de cursos",
                     {
                         className: "bg-white",
-                    }
+                    },
                 );
             }
         };
@@ -69,7 +70,7 @@ function Register() {
                     error.message || "Ocorreu um erro ao carregar os avatares",
                     {
                         className: "bg-white",
-                    }
+                    },
                 );
             }
         };
@@ -99,7 +100,7 @@ function Register() {
         try {
             if (userData.password.length < 4) {
                 const error = new Error(
-                    "A senha deve conter no mínimo 4 caracteres."
+                    "A senha deve conter no mínimo 4 caracteres.",
                 );
                 error.statusCode = 406;
 
