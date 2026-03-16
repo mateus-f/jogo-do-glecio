@@ -6,6 +6,7 @@ import { fade } from "../animations/pageAnimations";
 import Input from "../components/Input";
 import ButtonPrimary from "../components/buttons/ButtonPrimary";
 import { loginUser } from "../services/authService";
+import Cookies from 'js-cookie';
 
 function Login() {
     document.title = "Login · Jogo do Glécio";
@@ -19,7 +20,7 @@ function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (localStorage.getItem("ACCESS_TOKEN")) {
+        if (Cookies.get("token")) {
             navigate("/", { replace: true });
         }
     }, [navigate]);

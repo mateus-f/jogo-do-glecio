@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+
 const baseURL = "https://api-tabuada-glecio.vercel.app/api/v1/ranking";
 
 export const getRankingNormal = async () => {
@@ -6,7 +8,7 @@ export const getRankingNormal = async () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`,
+                Authorization: `Bearer ${Cookies.get("token")}`,
             },
         });
 
@@ -28,7 +30,7 @@ export const getRankingGlobal = async () => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`,
+                Authorization: `Bearer ${Cookies.get("token")}`,
             },
         });
 
@@ -50,7 +52,7 @@ export const setRanking = async (score, attempt = 0) => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`,
+                Authorization: `Bearer ${Cookies.get("token")}`,
             },
             body: JSON.stringify({ score }),
         });
@@ -81,7 +83,7 @@ export const resetRanking = async () => {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`,
+                Authorization: `Bearer ${Cookies.get("token")}`,
             },
         });
 

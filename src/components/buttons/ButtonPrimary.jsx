@@ -13,7 +13,7 @@ const ButtonPrimary = ({
 			type={type}
 			onClick={onClick}
 			disabled={disabled || isLoading}
-			className={`relative block w-full p-[2px] rounded-lg bg-gradient-to-b from-purple to-darkPurple hover:brightness-110 transition-all duration-300 ease-in-out ${
+			className={`relative block w-full p-[2px] rounded-lg bg-gradient-to-b from-purple to-darkPurple drop-shadow-md hover:brightness-110 transition-all duration-300 ease-in-out ${
 				disabled
 					? "opacity-70 cursor-not-allowed"
 					: isLoading

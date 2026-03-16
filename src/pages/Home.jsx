@@ -14,6 +14,8 @@ import { logoutUser } from "../services/authService";
 import { getUser } from "../services/userService";
 import { isTokenExpiringSoon } from "../utils/authUtils";
 import { getLocalUserInfo } from "../utils/userUtils";
+import { Howler } from "howler";
+import Cookies from "js-cookie";
 
 function Home() {
     document.title = "Início · Jogo do Glécio";
@@ -28,10 +30,10 @@ function Home() {
     const [mobileDropDown, setMobileDropDown] = useState(false);
 
     useEffect(() => {
-        const token = localStorage.getItem("ACCESS_TOKEN");
+        const token = Cookies.get("token");
 
         if (!token || isTokenExpiringSoon(token)) {
-            localStorage.removeItem("ACCESS_TOKEN");
+            Cookies.remove("token");
             navigate("/login", { replace: true });
         }
     }, [navigate]);
@@ -167,12 +169,21 @@ function Home() {
                             ter você aqui!
                         </p>
                         <div className="flex gap-3 max-sm:flex-col">
-                            <Link to="/play" className="w-full">
-                                <ButtonSuccess invertedContent={true}>
-                                    <HiOutlinePlay className="w-6 h-6" />
-                                    Jogar agora!
-                                </ButtonSuccess>
-                            </Link>
+                            <ButtonSuccess
+                                onClick={() => {
+                                    if (
+                                        Howler.ctx &&
+                                        Howler.ctx.state === "suspended"
+                                    ) {
+                                        Howler.ctx.resume();
+                                    }
+                                    navigate("/play");
+                                }}
+                                invertedContent={true}
+                            >
+                                <HiOutlinePlay className="w-6 h-6" />
+                                Jogar agora!
+                            </ButtonSuccess>
                             {windowWidth < 768 && (
                                 <Link to="/ranking" className="w-full">
                                     <ButtonSupport invertedContent={true}>

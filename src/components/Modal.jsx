@@ -24,7 +24,7 @@ function Modal({
                     <h3 className="text-xl font-bold text-purpleGray">
                         <X
                             strokeWidth={1.5}
-                            className="op-2 ml-auto right-2 transition-all ease-in-out cursor-pointer hover:scale-110"
+                            className="ml-auto right-2 transition-all ease-in-out cursor-pointer hover:scale-110"
                             onClick={onCancel}
                         />
                         {title}

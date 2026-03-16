@@ -1,4 +1,5 @@
 import { setLocalUserInfo } from "../utils/userUtils";
+import Cookies from "js-cookie";
 
 const baseURL = "https://api-tabuada-glecio.vercel.app/api/v1";
 
@@ -8,7 +9,7 @@ export const getUser = async (userId) => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`,
+                Authorization: `Bearer ${Cookies.get("token")}`,
             },
         });
 
@@ -17,7 +18,7 @@ export const getUser = async (userId) => {
 
         if (!response.ok) {
             throw new Error(
-                body.message || "Erro ao buscar informações do usuário"
+                body.message || "Erro ao buscar informações do usuário",
             );
         }
 
@@ -47,7 +48,7 @@ export const updateUser = async (newData) => {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`,
+                Authorization: `Bearer ${Cookies.get("token")}`,
             },
             body: JSON.stringify(newData),
         });
@@ -57,7 +58,7 @@ export const updateUser = async (newData) => {
 
         if (!response.ok) {
             throw new Error(
-                body.message || "Erro ao atualizar informações do usuário"
+                body.message || "Erro ao atualizar informações do usuário",
             );
         }
 
@@ -85,7 +86,7 @@ export const updateUserPassword = async (credentials) => {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`,
+                Authorization: `Bearer ${Cookies.get("token")}`,
             },
             body: JSON.stringify(credentials),
         });
@@ -94,7 +95,7 @@ export const updateUserPassword = async (credentials) => {
 
         if (!response.ok) {
             const error = new Error(
-                body.message || "Erro ao atualizar senha do usuário"
+                body.message || "Erro ao atualizar senha do usuário",
             );
             error.statusCode = body.status_code || 500;
 
@@ -109,7 +110,7 @@ export const updateUserPassword = async (credentials) => {
 
 export const getAvatarsList = async () => {
     try {
-        const response = await fetch(`${baseURL}/avatars/all`, {
+        const response = await fetch(`${baseURL}/avatars`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -131,11 +132,11 @@ export const getAvatarsList = async () => {
 
 export const getCoursesList = async () => {
     try {
-        const response = await fetch(`${baseURL}/courses/all`, {
+        const response = await fetch(`${baseURL}/courses`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`,
+                Authorization: `Bearer ${Cookies.get("token")}`,
             },
         });
 

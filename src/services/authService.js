@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+
 import { setLocalUserInfo } from "../utils/userUtils";
 
 const baseURL = "https://api-tabuada-glecio.vercel.app/api/v1/auth";
@@ -22,7 +24,12 @@ export const createUser = async (userData) => {
             throw error;
         }
 
-        localStorage.setItem("ACCESS_TOKEN", data.access_token);
+        //localStorage.setItem("ACCESS_TOKEN", data.access_token);
+        Cookies.set("token", data.access_token, { 
+            expires: 15,
+            secure: true,
+            sameSite: "strict",
+        });
 
         setLocalUserInfo({
             id: data.user.id,
@@ -61,7 +68,12 @@ export const loginUser = async (credentials) => {
             throw error;
         }
 
-        localStorage.setItem("ACCESS_TOKEN", data.access_token);
+        //localStorage.setItem("ACCESS_TOKEN", data.access_token);
+        Cookies.set("token", data.access_token, {
+            expires: 15,
+            secure: true,
+            sameSite: "strict",
+        });
 
         setLocalUserInfo({
             id: data.user.id,
@@ -84,6 +96,7 @@ export const loginUser = async (credentials) => {
 
 export const logoutUser = () => {
     localStorage.clear();
+    Cookies.remove("token");
     window.location.href = "/login";
 };
 

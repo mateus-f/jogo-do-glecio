@@ -6,7 +6,7 @@ const ButtonDanger = ({ children, type, disabled, isLoading, onClick }) => {
 				type={type}
 				onClick={onClick}
 				disabled={disabled || isLoading}
-				className={`relative block w-full p-[2px] rounded-lg bg-gradient-to-b hover:brightness-110 transition-all duration-300 from-red-500 to-red-600 ${
+				className={`relative block w-full p-[2px] drop-shadow-md rounded-lg bg-gradient-to-b hover:brightness-110 transition-all duration-300 from-red-500 to-red-600 ${
 					disabled
 						? "opacity-70 cursor-not-allowed"
 						: isLoading

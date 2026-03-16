@@ -1,7 +1,7 @@
 import { useLocation, Link } from "react-router";
 import { motion } from "framer-motion";
 import Confetti from "react-confetti";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getLocalUserInfo } from "../utils/userUtils";
 import { scrollFromRight } from "../animations/pageAnimations";
 import { useOverlay } from "../contexts/TimerOverlayProvider";
@@ -10,8 +10,10 @@ import { HiStar } from "react-icons/hi";
 import { Trophy, RefreshCcw } from "lucide-react";
 import ButtonSupport from "../components/buttons/ButtonSupport";
 import ButtonSuccess from "../components/buttons/ButtonSuccess";
+
 import greenHappyFace from "../assets/images/elements/green-happy-face.svg";
 import redSadFace from "../assets/images/elements/red-sad-face.svg";
+import victorySoundEffect from "../assets/sounds/victory.mp3";
 
 function Result() {
     document.title = "Resultados · Jogo do Glécio";
@@ -24,6 +26,13 @@ function Result() {
     const [userInfo, setUserInfo] = useState({});
 
     const { hideTimerOverlay } = useOverlay();
+
+    const victorySound = useRef(
+        new Howl({
+            src: [victorySoundEffect],
+            volume: 0.4,
+        }),
+    );
 
     useEffect(() => {
         const info = getLocalUserInfo();
@@ -52,6 +61,12 @@ function Result() {
         };
     }, []);
 
+    useEffect(() => {
+        if (location.state?.showConfetti) {
+            victorySound.current.play();
+        }
+    }, []);
+
     return (
         <>
             <motion.div
@@ -61,9 +76,9 @@ function Result() {
                 exit="exit"
             >
                 <ButtonPageBack to="/" replace={true} absolute={true}>
-                    Retornar
+                    Tela inicial
                 </ButtonPageBack>
-                <main className="content-center h-screen max-w-4xl p-6 pt-20 mx-auto space-y-8 gap-14 items-center">
+                <main className="md:content-center h-screen max-w-4xl p-6 pt-20 mx-auto space-y-8 gap-14 items-center">
                     <h2 className="mb-2 text-4xl font-black leading-8 text-center text-darkPurple">
                         Tempo Esgotado!
                     </h2>
@@ -107,7 +122,7 @@ function Result() {
                     <div className="flex gap-2 w-full justify-center max-[480px]:flex-col max-[480px]:items-center">
                         <Link
                             to={windowWidth < 768 ? "/ranking" : "/"}
-                            className="max-w-[200px] w-full"
+                            className="md:max-w-[200px] w-full"
                         >
                             <ButtonSupport>
                                 <Trophy className="w-6 h-6" strokeWidth={1.5} />
@@ -117,7 +132,7 @@ function Result() {
                         <Link
                             to="/play"
                             replace={true}
-                            className="max-w-[200px] w-full"
+                            className="md:max-w-[200px] w-full"
                         >
                             <ButtonSuccess>
                                 <RefreshCcw strokeWidth={1.5} />

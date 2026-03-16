@@ -59,7 +59,7 @@ function RankingList() {
                     "Erro ao buscar dados do ranking. Tente novamente mais tarde.",
                 {
                     className: "bg-white",
-                }
+                },
             );
         }
         setIsRankingUpdating(false);
@@ -79,7 +79,7 @@ function RankingList() {
                     "Erro ao buscar dados do ranking. Tente novamente mais tarde.",
                 {
                     className: "bg-white",
-                }
+                },
             );
         }
 
@@ -102,7 +102,7 @@ function RankingList() {
             toast.error(
                 error.message ||
                     "Erro ao atualizar ranking. Tente novamente mais tarde",
-                { className: "bg-white" }
+                { className: "bg-white" },
             );
         } finally {
             setIsRankingUpdating(false);
@@ -132,12 +132,30 @@ function RankingList() {
             toast.error(
                 error.message ||
                     "Erro ao limpar o ranking. Tente novamente mais tarde",
-                { className: "bg-white" }
+                { className: "bg-white" },
             );
         } finally {
             setShowModal(false);
             setIsRankingReseting(false);
         }
+    };
+
+    const getRankGradient = (position) => {
+        if (position === 0)
+            return "font-semibold bg-gradient-to-r from-amber-300 via-yellow-500 to-yellow-700 bg-clip-text text-transparent animate-glow-gold";
+        if (position === 1)
+            return "font-semibold bg-gradient-to-r from-gray-300 via-gray-400 to-gray-600 bg-clip-text text-transparent animate-glow-silver";
+        if (position === 2)
+            return "bg-gradient-to-r font-semibold from-amber-600 via-amber-700 to-amber-800 bg-clip-text text-transparent animate-glow-bronze";
+
+        return "";
+    };
+
+    const getStarGradient = (index) => {
+        if (index === 0) return "url(#goldGradient)";
+        if (index === 1) return "url(#silverGradient)";
+        if (index === 2) return "url(#bronzeGradient)";
+        return undefined;
     };
 
     useEffect(() => {
@@ -170,11 +188,11 @@ function RankingList() {
 
         if (activeTab === "normal") {
             requestAnimationFrame(
-                () => (container.scrollTop = normalScrollPosition)
+                () => (container.scrollTop = normalScrollPosition),
             );
         } else if (activeTab === "global") {
             requestAnimationFrame(
-                () => (container.scrollTop = globalScrollPosition)
+                () => (container.scrollTop = globalScrollPosition),
             );
         }
 
@@ -192,6 +210,46 @@ function RankingList() {
 
     return (
         <>
+            <svg width="0" height="0" style={{ position: "absolute" }}>
+                <defs>
+                    <linearGradient
+                        id="goldGradient"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%"
+                    >
+                        <stop offset="0%" stopColor="#fde047" />
+                        <stop offset="50%" stopColor="#facc15" />
+                        <stop offset="100%" stopColor="#ca8a04" />
+                    </linearGradient>
+
+                    <linearGradient
+                        id="silverGradient"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%"
+                    >
+                        <stop offset="0%" stopColor="#e5e7eb" />
+                        <stop offset="50%" stopColor="#9ca3af" />
+                        <stop offset="100%" stopColor="#4b5563" />
+                    </linearGradient>
+
+                    <linearGradient
+                        id="bronzeGradient"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%"
+                    >
+                        <stop offset="0%" stopColor="#f59e0b" />
+                        <stop offset="50%" stopColor="#b45309" />
+                        <stop offset="100%" stopColor="#7c2d12" />
+                    </linearGradient>
+                </defs>
+            </svg>
+
             <div className="flex flex-col gap-3 p-8 max-md:pt-20 md:p-10 md:border rounded-2xl max-sm:w-screen max-sm:h-screen md:shadow-sm min-w-[350px] lg:min-w-[380px] md:w-1/2 text-darkGray border-grayColor lg:w-1/3">
                 <h2 className="text-2xl font-bold">Ranking</h2>
                 {!userInfo.isAdmin && (
@@ -278,7 +336,7 @@ function RankingList() {
                                     >
                                         <div className="flex items-center min-w-0">
                                             <span
-                                                className={`min-w-6 ${
+                                                className={`min-w-6 ${getRankGradient(index)} ${
                                                     item.user.id == userInfo.id
                                                         ? "text-purpleSecondary"
                                                         : ""
@@ -290,13 +348,13 @@ function RankingList() {
                                                 src={
                                                     item.user.avatar.path_128px
                                                 }
-                                                alt={`${item.user.name}'s avatar`}
+                                                alt={`Avatar do(a) ${item.user.name}`}
                                                 className="w-10 h-10 mx-2 rounded-full bg-skeletonLoadingBase"
                                             />
                                             <div className="flex flex-col flex-1 min-w-0">
                                                 <h3
                                                     title={item.user.name}
-                                                    className="w-full overflow-hidden text-base leading-4 capitalize text-purpleGray text-ellipsis whitespace-nowrap"
+                                                    className={`${{/*getRankGradient(index)*/}} w-full overflow-hidden text-base leading-4 capitalize text-purpleGray text-ellipsis whitespace-nowrap`}
                                                 >
                                                     {item.user.name}
                                                 </h3>
@@ -311,14 +369,19 @@ function RankingList() {
                                             </div>
                                         </div>
                                         <div
-                                            className={`${
-                                                item.user.id === userInfo.id
-                                                    ? "text-purpleSecondary"
-                                                    : ""
-                                            } flex items-cente gap-1 flex-shrink-0 w-11 font-medium`}
+                                            className={`flex items-center gap-1 flex-shrink-0 w-11 font-medium 
+                                                    ${getRankGradient(index)}
+                                                    ${item.user.id === userInfo.id ? "text-purpleSecondary" : ""}`}
                                             title={`${item.score} pontos`}
                                         >
-                                            <HiStar className="w-5 h-5" />
+                                            <HiStar
+                                                className="w-5 h-5"
+                                                style={{
+                                                    fill: getStarGradient(
+                                                        index,
+                                                    ),
+                                                }}
+                                            />
                                             <span>{item.score}</span>
                                         </div>
                                     </motion.div>

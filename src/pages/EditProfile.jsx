@@ -109,7 +109,7 @@ function EditProfile() {
             animate="animate"
             exit="exit"
         >
-            <ButtonPageBack to="/" replace={true} absolute={true}>
+            <ButtonPageBack to={-1} replace={true} absolute={true}>
                 Retornar
             </ButtonPageBack>
             <main className="flex flex-col max-w-2xl gap-6 p-6 pt-24 lg:gap-16 sm:mx-auto">
