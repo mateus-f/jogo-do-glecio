@@ -348,13 +348,13 @@ function RankingList() {
                                                 src={
                                                     item.user.avatar.path_128px
                                                 }
-                                                alt={`${item.user.name}'s avatar`}
+                                                alt={`Avatar do(a) ${item.user.name}`}
                                                 className="w-10 h-10 mx-2 rounded-full bg-skeletonLoadingBase"
                                             />
                                             <div className="flex flex-col flex-1 min-w-0">
                                                 <h3
                                                     title={item.user.name}
-                                                    className={`${/*getRankGradient(index)*/ null} w-full overflow-hidden text-base leading-4 capitalize text-purpleGray text-ellipsis whitespace-nowrap`}
+                                                    className={`${{/*getRankGradient(index)*/}} w-full overflow-hidden text-base leading-4 capitalize text-purpleGray text-ellipsis whitespace-nowrap`}
                                                 >
                                                     {item.user.name}
                                                 </h3>
