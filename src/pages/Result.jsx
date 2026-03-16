@@ -63,7 +63,7 @@ function Result() {
 
     useEffect(() => {
         if (location.state?.showConfetti) {
-            victorySound.play();
+            victorySound.current.play();
         }
     }, []);
 
