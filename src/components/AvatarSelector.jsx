@@ -141,7 +141,8 @@ const AvatarSelector = ({
                                     src={avatar.path_256px}
                                     alt={`Avatar ${avatar.id}`}
                                 />
-                                {selectedAvatar === avatar.id && (
+                                {/*Foi preciso fazer o parse para Strinh*/}
+                                {String(selectedAvatar) === String(avatar.id) && (
                                     <img
                                         src={SelectedIndicator}
                                         alt="Selected"
