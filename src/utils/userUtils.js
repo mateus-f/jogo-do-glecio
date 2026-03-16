@@ -1,11 +1,11 @@
 export const getLocalUserInfo = () => {
     if (!localStorage.getItem("user-info")) {
         return {
-            id: parseInt(localStorage.getItem("ID")),
+            id: localStorage.getItem("ID"),
             name: localStorage.getItem("NAME"),
-            courseId: parseInt(localStorage.getItem("COURSE_ID")),
+            courseId: localStorage.getItem("COURSE_ID"),
             course: localStorage.getItem("COURSE"),
-            avatarId: parseInt(localStorage.getItem("AVATAR_ID")),
+            avatarId: localStorage.getItem("AVATAR_ID"),
             avatarDefault: localStorage.getItem("AVATAR_DEFAULT"),
             avatarMedium: localStorage.getItem("AVATAR_MEDIUM"),
             avatarLow: localStorage.getItem("AVATAR_LOW"),
