@@ -79,7 +79,7 @@ const Developer = ({
     //const mobileRoleText = role.split("&");
 
     return (
-        <div className="relative w-full min-w-60 overflow-hidden rounded-xl shadow-md hover:-translate-y-2 transition-all ease-in-out">
+        <div className="relative w-full min-w-60 bg-surface overflow-hidden rounded-xl shadow-md hover:-translate-y-2 transition-all ease-in-out">
             <img src={avatarUrl} alt={`Imagem de ${name}`} className="w-full bg-skeletonLoadingBase" />
             <div className="p-3">
                 <p className="text-2xl font-medium text-purpleDarkGray" title={name}>

@@ -121,7 +121,7 @@ function Game() {
             toast.error(
                 error.message || "Erro ao enviar pontos para o ranking",
                 {
-                    className: "bg-white",
+                    className: "bg-surface",
                 },
             );
         }
@@ -318,7 +318,7 @@ function Game() {
                                 (num) => (
                                     <button
                                         key={num}
-                                        className="w-full h-full bg-darkPurple drop-shadow-md rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
+                                        className="w-full h-full bg-darkPurple drop-shadow-md rounded-xl text-surface font-semibold text-4xl shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
                                         onPointerDown={(e) => {
                                             e.preventDefault();
                                             handleNumericButtonClick(num);
@@ -329,7 +329,7 @@ function Game() {
                                 ),
                             )}
                             <button
-                                className="w-full h-full bg-redColor rounded-xl text-white flex items-center justify-center shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
+                                className="w-full h-full bg-redColor rounded-xl text-surface flex items-center justify-center shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
                                 onPointerDown={(e) => {
                                     e.preventDefault();
                                     setUserResponse((prev) =>
@@ -340,7 +340,7 @@ function Game() {
                                 <Delete className="w-10 h-10" />
                             </button>
                             <button
-                                className="w-full h-full bg-darkPurple rounded-xl text-white font-semibold text-4xl shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
+                                className="w-full h-full bg-darkPurple rounded-xl text-surface font-semibold text-4xl shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
                                 onPointerDown={(e) => {
                                     e.preventDefault();
                                     handleNumericButtonClick("0");
@@ -349,7 +349,7 @@ function Game() {
                                 0
                             </button>
                             <button
-                                className="w-full h-full bg-greenColor rounded-xl text-white flex items-center justify-center shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
+                                className="w-full h-full bg-greenColor rounded-xl text-surface flex items-center justify-center shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
                                 onPointerDown={(e) => {
                                     e.preventDefault();
                                     checkIfUserIsCorrect();

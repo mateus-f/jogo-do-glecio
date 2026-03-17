@@ -25,7 +25,7 @@ const Select = ({ name, label, values, selectedValue, onSelect }) => {
                     name={name}
                     value={selectedOption}
                     disabled={values.length === 0}
-                    className={`px-[10px] py-3 cursor-pointer rounded-lg border-2 text-purpleGray border-[#E2DDEB] outline-none bg-transparent focus:border-purple appearance-none w-full ${
+                    className={`px-[10px] py-3 cursor-pointer rounded-lg border-2 text-purpleGray border-borderColor placeholder:text-grayColor outline-none bg-surface focus:border-purple appearance-none w-full ${
                         values.length === 0 ? "opacity-70 cursor-wait" : ""
                     }`}
                     onChange={handleChange}

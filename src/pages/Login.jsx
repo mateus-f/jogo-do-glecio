@@ -52,7 +52,7 @@ function Login() {
                 });
             } else {
                 toast.error(error.message || "Erro ao fazer login", {
-                    className: "bg-white",
+                    className: "bg-surface",
                 });
             }
         }
@@ -70,7 +70,7 @@ function Login() {
                 variants={fade()}
             >
                 <main className="flex items-center justify-center w-1/2 h-screen max-sm:w-full max-sm:items-start">
-                    <div className="w-full max-w-md p-8 space-y-16 bg-white max-sm:space-y-8">
+                    <div className="w-full max-w-md p-8 space-y-16 max-sm:space-y-8">
                         <div className="flex flex-col gap-1">
                             <p className="text-4xl font-black text-transparent bg-gradient-to-b from-darkPurple to-purpleSecondary bg-clip-text">
                                 Bem-vindo de volta

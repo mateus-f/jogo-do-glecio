@@ -27,7 +27,7 @@ export const TimerOverlayProvider = ({ children }) => {
                         animate="animate"
                         exit="exit"
                         transition={{ duration: 0.3 }}
-                        className="absolute inset-0 bg-black/80 text-white flex items-center justify-center z-30"
+                        className="absolute inset-0 bg-black/80 text-surface flex items-center justify-center z-30"
                     >
                         <div className="flex flex-col items-center">
                             <AlarmClock className="w-10 h-10 animate-tilt-shaking" />

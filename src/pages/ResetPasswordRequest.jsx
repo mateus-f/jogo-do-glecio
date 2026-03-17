@@ -35,7 +35,7 @@ function ResetPasswordRequest() {
 
             if (response.status_code == 200) {
                 toast.success(response.message, {
-                    className: "bg-white",
+                    className: "bg-surface",
                 });
             }
         } catch (error) {
@@ -44,7 +44,7 @@ function ResetPasswordRequest() {
                 error.message ||
                     "Erro ao enviar e-mail de recuperação. Tente novamente mais tarde",
                 {
-                    className: "bg-white",
+                    className: "bg-surface",
                 }
             );
         }
@@ -63,7 +63,7 @@ function ResetPasswordRequest() {
                     Retornar
                 </ButtonPageBack>
                 <div className="flex items-center justify-center flex-grow max-sm:items-start max-sm:mt-24">
-                    <main className="max-w-sm max-[405px]:max-w-[86%] max-sm:p-4 p-8 rounded-lg sm:border-2 border-gray">
+                    <main className="max-w-sm max-[405px]:max-w-[86%] max-sm:p-4 p-8 rounded-lg sm:border-2 border-borderColor sm:bg-surface w-full sm:drop-shadow-lg">
                         <div className="space-y-2">
                             <p className="text-4xl font-black text-darkPurple">
                                 Esqueceu sua senha?

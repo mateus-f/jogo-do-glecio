@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Info, LogOut, Trophy, UserRoundPen } from "lucide-react";
+import { Info, LogOut, MoonIcon, SunIcon, Trophy, UserRoundPen } from "lucide-react";
 import { useEffect, useState } from "react";
 import Confetti from "react-confetti";
 import { HiOutlinePlay, HiStar } from "react-icons/hi2";
@@ -16,6 +16,7 @@ import { isTokenExpiringSoon } from "../utils/authUtils";
 import { getLocalUserInfo } from "../utils/userUtils";
 import { Howler } from "howler";
 import Cookies from "js-cookie";
+import { useTheme } from "../hooks/useTheme";
 
 function Home() {
     document.title = "Início · Jogo do Glécio";
@@ -26,6 +27,8 @@ function Home() {
     const [userInfo, setUserInfo] = useState({});
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+
+    const { theme, toggleTheme } = useTheme();
 
     const [mobileDropDown, setMobileDropDown] = useState(false);
 
@@ -92,7 +95,7 @@ function Home() {
                         {userInfo.avatarDefault ? (
                             <img
                                 src={userInfo.avatarDefault}
-                                alt={`${userInfo.name ?? "Anônimo"}'s avatar`}
+                                alt={`Avatar do(a) ${userInfo.name ?? "Anônimo"}`}
                                 className="right-0 z-30 rounded-full w-28 bg-skeletonLoadingBase max-sm:absolute max-sm:w-11 max-sm:top-0 max-sm:cursor-pointer sm:pointer-events-none"
                                 onClick={() =>
                                     setMobileDropDown(!mobileDropDown)
@@ -123,7 +126,7 @@ function Home() {
                                     Maior pontuação: {userInfo.maxScore ?? "00"}
                                 </p>
                                 <div
-                                    className={`flex z-30 items-center gap-2 text-purpleGray max-sm:absolute max-sm:w-40 max-sm:bg-white max-sm:shadow-md max-sm:border max-sm:rounded-xl max-sm:flex-col max-sm:items-start top-12 right-1 max-sm:gap-0 max-sm:divide-y-2 max-sm:${
+                                    className={`flex z-30 items-center gap-2 text-purpleGray max-sm:absolute max-sm:w-40 max-sm:bg-surface max-sm:shadow-md max-sm:border border-borderColor max-sm:rounded-xl max-sm:flex-col max-sm:items-start top-12 right-1 max-sm:gap-0 max-sm:divide-y-2 divide-borderColor max-sm:${
                                         !mobileDropDown && "hidden"
                                     }`}
                                 >
@@ -140,7 +143,37 @@ function Home() {
                                             Editar perfil
                                         </span>
                                     </Link>
-                                    <span
+                                    {theme === "light" ? (
+                                        <button
+                                            title="Modo escuro"
+                                            className="flex gap-2 cursor-pointer max-sm:p-3 max-sm:w-full"
+                                            onClick={toggleTheme}
+                                        >
+                                            <MoonIcon
+                                                strokeWidth={1.8}
+                                                className="w-5 h-5 transition-all ease-in-out cursor-pointer hover:scale-110"
+                                            />
+                                            <span className="select-none sm:hidden">
+                                                Modo escuro
+                                            </span>
+                                        </button>
+                                    ) : (
+                                        <button
+                                            title="Modo claro"
+                                            className="flex gap-2 cursor-pointer max-sm:p-3 max-sm:w-full"
+                                            onClick={toggleTheme}
+                                        >
+                                            <SunIcon
+                                                strokeWidth={1.8}
+                                                className="w-5 h-5 transition-all ease-in-out cursor-pointer hover:scale-110"
+                                            />
+                                            <span className="select-none sm:hidden">
+                                                Modo claro
+                                            </span>
+                                        </button>
+                                    )}
+
+                                    <button
                                         title="Sair"
                                         className="flex gap-2 cursor-pointer max-sm:p-3 max-sm:w-full"
                                         onClick={logoutUser}
@@ -152,7 +185,7 @@ function Home() {
                                         <span className="select-none sm:hidden">
                                             Sair
                                         </span>
-                                    </span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
