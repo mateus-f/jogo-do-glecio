@@ -20,3 +20,9 @@ export const getLocalUserInfo = () => {
 export const setLocalUserInfo = (data) => {
     localStorage.setItem("user-info", JSON.stringify(data));
 };
+
+export const setMaxScore = (score) => {
+    const userInfo = getLocalUserInfo();
+    userInfo.maxScore = score;
+    setLocalUserInfo(userInfo);
+}

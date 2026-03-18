@@ -5,6 +5,7 @@ import { HiMiniChevronLeft } from "react-icons/hi2";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { scrollFromRight } from "../animations/pageAnimations";
+import { getLocalUserInfo, setMaxScore } from "../utils/userUtils";
 import Modal from "../components/Modal";
 import { useOverlay } from "../contexts/TimerOverlayProvider";
 import { setRanking } from "../services/rankingService";
@@ -72,6 +73,7 @@ function Game() {
             correctSoundEffect.play();
         } else {
             wrongSoundEffect.play();
+            //navigator.vibrate(100)
             setWrongAnswersCount((prev) => prev + 1);
         }
 
@@ -146,9 +148,9 @@ function Game() {
 
             if (
                 correctAnswersCount >
-                parseInt(localStorage.getItem("MAX_SCORE") || "0")
+                parseInt(getLocalUserInfo().maxScore || "0")
             ) {
-                localStorage.setItem("MAX_SCORE", correctAnswersCount);
+                setMaxScore(correctAnswersCount);
                 setShowConfettiInResultPage(true);
             }
 
@@ -162,7 +164,7 @@ function Game() {
                 });
             }, 1000);
 
-            setRankingScore(correctAnswersCount);
+            setRankingScore(correctAnswersCount - wrongAnswersCount);
 
             return () => clearTimeout(timer);
         }
@@ -306,7 +308,7 @@ function Game() {
                     {/* Teclado: Isolamos o pb-6 aqui pro celular pra nunca colar na borda de baixo da tela */}
                     <div className="max-w-[450px] max-[580px]:max-w-full max-[580px]:w-full max-[580px]:pb-6 max-[580px]:shrink-0">
                         <input
-                            className="w-full text-lg text-purpleDarkGray drop-shadow-md font-medium p-4 border border-grayColor outline-none bg-transparent rounded-xl mb-2 max-[580px]:p-3"
+                            className="w-full text-lg text-purpleDarkGray bg-surface drop-shadow-md font-medium p-4 border border-grayColor outline-none rounded-xl mb-2 max-[580px]:p-3"
                             disabled
                             type="text"
                             maxLength={3}
