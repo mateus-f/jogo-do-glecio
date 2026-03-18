@@ -58,7 +58,7 @@ function RankingList() {
                 error.message ||
                     "Erro ao buscar dados do ranking. Tente novamente mais tarde.",
                 {
-                    className: "bg-white",
+                    className: "bg-surface",
                 },
             );
         }
@@ -78,7 +78,7 @@ function RankingList() {
                 error.message ||
                     "Erro ao buscar dados do ranking. Tente novamente mais tarde.",
                 {
-                    className: "bg-white",
+                    className: "bg-surface",
                 },
             );
         }
@@ -102,7 +102,7 @@ function RankingList() {
             toast.error(
                 error.message ||
                     "Erro ao atualizar ranking. Tente novamente mais tarde",
-                { className: "bg-white" },
+                { className: "bg-surface" },
             );
         } finally {
             setIsRankingUpdating(false);
@@ -126,13 +126,13 @@ function RankingList() {
             const response = await resetRanking();
 
             if (response.status_code === 200) {
-                toast.success(response.message, { className: "bg-white" });
+                toast.success(response.message, { className: "bg-surface" });
             }
         } catch (error) {
             toast.error(
                 error.message ||
                     "Erro ao limpar o ranking. Tente novamente mais tarde",
-                { className: "bg-white" },
+                { className: "bg-surface" },
             );
         } finally {
             setShowModal(false);
@@ -250,7 +250,7 @@ function RankingList() {
                 </defs>
             </svg>
 
-            <div className="flex flex-col gap-3 p-8 max-md:pt-20 md:p-10 md:border rounded-2xl max-sm:w-screen max-sm:h-screen md:shadow-sm min-w-[350px] lg:min-w-[380px] md:w-1/2 text-darkGray border-grayColor lg:w-1/3">
+            <div className="flex flex-col gap-3 p-8 max-md:pt-20 md:p-10 md:border rounded-2xl max-sm:w-screen max-sm:h-screen md:shadow-sm min-w-[350px] lg:min-w-[380px] md:w-1/2 text-darkGray border-borderColor bg-surface shadow-md lg:w-1/3">
                 <h2 className="text-2xl font-bold">Ranking</h2>
                 {!userInfo.isAdmin && (
                     <p className="text-base">
@@ -309,7 +309,7 @@ function RankingList() {
                 <div className="relative mt-2 max-sm:flex-1 max-sm:overflow-hidden">
                     <div
                         ref={rankingListContainerRef}
-                        className="flex flex-col pr-2 overflow-y-auto divide-y-2 divide-grayColor/90 h-full max-h-full md:max-h-72"
+                        className="flex flex-col pr-2 overflow-y-auto divide-y-2 divide-borderColor h-full max-h-full md:max-h-72"
                     >
                         {isRankingUpdating ? (
                             <SkeletonTheme
@@ -395,10 +395,10 @@ function RankingList() {
                         )}
                     </div>
                     {showGradientTop && (
-                        <div className="absolute top-0 left-0 w-full h-16 pointer-events-none bg-gradient-to-t from-transparent to-white" />
+                        <div className="absolute top-0 left-0 w-full h-16 pointer-events-none bg-gradient-to-t from-transparent to-surface" />
                     )}
                     {showGradientBottom && (
-                        <div className="absolute bottom-0 left-0 w-full h-16 pointer-events-none bg-gradient-to-b from-transparent to-white" />
+                        <div className="absolute bottom-0 left-0 w-full h-16 pointer-events-none bg-gradient-to-b from-transparent to-surface" />
                     )}
                 </div>
             </div>

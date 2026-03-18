@@ -54,7 +54,7 @@ function EditProfile() {
                     error.message ||
                         "Ocorreu um erro ao carregar a lista de cursos",
                     {
-                        className: "bg-white",
+                        className: "bg-surface",
                     }
                 );
             }
@@ -68,7 +68,7 @@ function EditProfile() {
                 toast.error(
                     error.message || "Ocorreu um erro ao carregar os avatares",
                     {
-                        className: "bg-white",
+                        className: "bg-surface",
                     }
                 );
             }
@@ -85,14 +85,14 @@ function EditProfile() {
         try {
             const response = await updateUser(userData);
             if (response.status_code === 200) {
-                toast.success(response.message, { className: "bg-white" });
+                toast.success(response.message, { className: "bg-surface" });
             }
         } catch (error) {
             toast.error(
                 error.message ||
                     "Ocorreu um erro ao atualizar suas informações. Tente novamente mais tarde.",
                 {
-                    className: "bg-white",
+                    className: "bg-surface",
                 }
             );
         }
@@ -157,7 +157,7 @@ function EditProfile() {
                         }}
                     />
 
-                    <Link to="/edit-profile/password" className="text-darkPurple flex gap-2 items-center p-3 border border-darkPurple rounded-lg justify-between">
+                    <Link to="/edit-profile/password" className="text-darkPurple flex gap-2 items-center p-3 bg-surface border border-darkPurple rounded-lg justify-between">
                         Alterar sua senha
                         <SquareArrowOutUpRight
                             className="w-5 h-5"

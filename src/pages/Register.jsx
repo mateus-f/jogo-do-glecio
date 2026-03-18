@@ -55,7 +55,7 @@ function Register() {
                     error.message ||
                         "Ocorreu um erro ao carregar a lista de cursos",
                     {
-                        className: "bg-white",
+                        className: "bg-surface",
                     },
                 );
             }
@@ -69,7 +69,7 @@ function Register() {
                 toast.error(
                     error.message || "Ocorreu um erro ao carregar os avatares",
                     {
-                        className: "bg-white",
+                        className: "bg-surface",
                     },
                 );
             }
@@ -114,7 +114,7 @@ function Register() {
                 navigate("/", { replace: true, state: { newUser: true } });
 
                 toast.success("Perfil criado com sucesso!", {
-                    className: "bg-white",
+                    className: "bg-surface",
                 });
             }
         } catch (error) {
@@ -133,7 +133,7 @@ function Register() {
                 });
             } else {
                 toast.error(error.message || "Erro ao criar perfil", {
-                    className: "bg-white",
+                    className: "bg-surface",
                 });
             }
         }
@@ -152,7 +152,7 @@ function Register() {
             >
                 <div className="w-1/2 h-screen max-sm:hidden bg-gradient-to-b from-darkPurple to-purple"></div>
                 <main className="flex items-center justify-center w-1/2 h-screen py-4 overflow-y-auto max-sm:w-full max-sm:items-start max-sm:py-6">
-                    <div className="w-full max-w-md px-8 space-y-4 bg-white max-sm:space-y-6">
+                    <div className="w-full max-w-md px-8 space-y-4 max-sm:space-y-6">
                         <ButtonPageBack
                             to="/login"
                             replace={true}

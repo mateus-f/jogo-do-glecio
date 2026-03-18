@@ -40,8 +40,8 @@ const Input = ({
                     onChange={onChange}
                     required={required}
                     disabled={disabled}
-                    className={`py-[10px] pl-3 pr-10 rounded-lg border-2 text-purpleGray outline-none bg-transparent focus:border-purple w-full ${
-                        error ? "border-red-500" : "border-[#E2DDEB]"
+                    className={`py-[10px] pl-3 pr-10 rounded-lg border-2 text-purpleGray placeholder:text-grayColor outline-none bg-surface focus:border-purple w-full ${
+                        error ? "border-red-500" : "border-borderColor"
                     } ${disabled ? "opacity-70 cursor-not-allowed" : ""}`}
                 />
                 {isPassword && (

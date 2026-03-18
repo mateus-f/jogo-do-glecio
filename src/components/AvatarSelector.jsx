@@ -135,7 +135,7 @@ const AvatarSelector = ({
                                 className="w-16 h-16 flex-none mr-3 cursor-pointer relative transition-transform active:scale-95"
                             >
                                 <img
-                                    className={`h-full w-full rounded-full bg-gray-100 object-cover select-none border-2 ${
+                                    className={`h-full w-full rounded-full bg-skeletonLoadingHighlight object-cover select-none border-2 ${
                                         selectedAvatar === avatar.id ? 'border-primary' : 'border-transparent'
                                     }`}
                                     src={avatar.path_256px}
@@ -156,10 +156,10 @@ const AvatarSelector = ({
 
                 {/* Gradientes de indicação de scroll */}
                 {showGradientStart && (
-                    <div className="absolute top-0 left-0 h-full w-12 pointer-events-none bg-gradient-to-l from-transparent to-white z-20" />
+                    <div className="absolute top-0 left-0 h-full w-12 pointer-events-none bg-gradient-to-l from-transparent to-surface z-20" />
                 )}
                 {showGradientEnd && (
-                    <div className="absolute top-0 right-0 h-full w-12 pointer-events-none bg-gradient-to-r from-transparent to-white z-20" />
+                    <div className="absolute top-0 right-0 h-full w-12 pointer-events-none bg-gradient-to-r from-transparent to-surface z-20" />
                 )}
             </div>
         </div>
