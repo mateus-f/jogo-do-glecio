@@ -11,7 +11,7 @@ function About() {
             initial="initial"
             animate="animate"
             exit="exit"
-            variants={fade()}
+            variants={fade}
             onAnimationComplete={() =>
                 document.body.classList.remove("no-scroll")
             }

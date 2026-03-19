@@ -1,5 +1,12 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Info, LogOut, MoonIcon, SunIcon, Trophy, UserRoundPen } from "lucide-react";
+import {
+    Info,
+    LogOut,
+    MoonIcon,
+    SunIcon,
+    Trophy,
+    UserRoundPen,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import Confetti from "react-confetti";
 import { HiOutlinePlay, HiStar } from "react-icons/hi2";
@@ -9,6 +16,9 @@ import { fade } from "../animations/pageAnimations";
 import ButtonPrimary from "../components/buttons/ButtonPrimary";
 import ButtonSuccess from "../components/buttons/ButtonSuccess";
 import ButtonSupport from "../components/buttons/ButtonSupport";
+import LettersPullUpAnimation from "../animations/components/LettersPullUpAnimation";
+import ContainerFadeAnimation from "../animations/components/ContainerFadeAnimation";
+import CounterAnimation from "../animations/components/CounterAnimation";
 import RankingList from "../components/RankingList";
 import { logoutUser } from "../services/authService";
 import { getUser } from "../services/userService";
@@ -17,6 +27,9 @@ import { getLocalUserInfo } from "../utils/userUtils";
 import { Howler } from "howler";
 import Cookies from "js-cookie";
 import { useTheme } from "../hooks/useTheme";
+import { dropdownVariants } from "../animations/pageAnimations";
+
+import switchSound from "../assets/sounds/switch.mp3";
 
 function Home() {
     document.title = "Início · Jogo do Glécio";
@@ -31,6 +44,16 @@ function Home() {
     const { theme, toggleTheme } = useTheme();
 
     const [mobileDropDown, setMobileDropDown] = useState(false);
+
+    const switchSoundEffect = new Howl({
+        src: switchSound,
+        volume: 0.8,
+    });
+
+    const handleToggleTheme = () => {
+        toggleTheme();
+        switchSoundEffect.play();
+    };
 
     useEffect(() => {
         const token = Cookies.get("token");
@@ -81,7 +104,7 @@ function Home() {
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                variants={fade()}
+                variants={fade}
                 className="flex max-w-6xl gap-6 p-6 md:p-10 lg:gap-24 md:mx-auto"
                 onAnimationStart={() => {
                     const viewportWidth =
@@ -117,81 +140,91 @@ function Home() {
                             <p className="text-base text-purpleGray">
                                 Seja bem-vindo(a),
                             </p>
-                            <p className="text-3xl font-black leading-8 md:text-4xl text-darkPurple">
-                                {userInfo.name ?? "Anônimo"}
-                            </p>
+                            <LettersPullUpAnimation
+                                text={userInfo.name ?? "Anônimo"}
+                                className="text-3xl font-black leading-8 md:text-4xl text-darkPurple"
+                            />
                             <div className="flex items-center justify-between mt-3 text-darkGray">
                                 <p className="flex items-center gap-1 text-sm">
-                                    <HiStar className="w-5 h-5" />
-                                    Maior pontuação: {userInfo.maxScore ?? "00"}
+                                    <HiStar className="w-5 h-5 relative bottom-[1px]" />
+                                    Maior pontuação:{" "}
+                                    <CounterAnimation
+                                        value={
+                                            userInfo.maxScore
+                                                ? Number(userInfo.maxScore)
+                                                : 0
+                                        }
+                                    />
                                 </p>
-                                <div
-                                    className={`flex z-30 items-center gap-2 text-purpleGray max-sm:absolute max-sm:w-40 max-sm:bg-surface max-sm:shadow-md max-sm:border border-borderColor max-sm:rounded-xl max-sm:flex-col max-sm:items-start top-12 right-1 max-sm:gap-0 max-sm:divide-y-2 divide-borderColor max-sm:${
-                                        !mobileDropDown && "hidden"
-                                    }`}
-                                >
-                                    <Link
-                                        to="/edit-profile"
-                                        title="Editar perfil"
-                                        className="flex gap-2 max-sm:p-3 max-sm:w-full"
+                                {(mobileDropDown || windowWidth >= 640) && (
+                                    <motion.div
+                                        variants={dropdownVariants}
+                                        initial={
+                                            windowWidth < 640
+                                                ? "hidden"
+                                                : "visible"
+                                        }
+                                        animate="visible"
+                                        exit="hidden"
+                                        className="flex z-30 items-center gap-2 text-purpleGray max-sm:absolute max-sm:w-40 max-sm:bg-surface max-sm:shadow-md max-sm:border border-borderColor max-sm:rounded-xl max-sm:flex-col max-sm:items-start top-12 right-1 max-sm:gap-0 max-sm:divide-y-2 divide-borderColor"
                                     >
-                                        <UserRoundPen
-                                            strokeWidth={1.8}
-                                            className="w-5 h-5 transition-all ease-in-out hover:scale-110"
-                                        />
-                                        <span className="sm:hidden">
-                                            Editar perfil
-                                        </span>
-                                    </Link>
-                                    {theme === "light" ? (
-                                        <button
-                                            title="Modo escuro"
-                                            className="flex gap-2 cursor-pointer max-sm:p-3 max-sm:w-full"
-                                            onClick={toggleTheme}
+                                        <Link
+                                            to="/edit-profile"
+                                            className="flex gap-2 max-sm:p-3 max-sm:w-full hover:bg-black/5 transition-colors"
                                         >
-                                            <MoonIcon
+                                            <UserRoundPen
                                                 strokeWidth={1.8}
-                                                className="w-5 h-5 transition-all ease-in-out cursor-pointer hover:scale-110"
+                                                className="w-5 h-5"
                                             />
-                                            <span className="select-none sm:hidden">
-                                                Modo escuro
+                                            <span className="sm:hidden">
+                                                Editar perfil
                                             </span>
-                                        </button>
-                                    ) : (
-                                        <button
-                                            title="Modo claro"
-                                            className="flex gap-2 cursor-pointer max-sm:p-3 max-sm:w-full"
-                                            onClick={toggleTheme}
-                                        >
-                                            <SunIcon
-                                                strokeWidth={1.8}
-                                                className="w-5 h-5 transition-all ease-in-out cursor-pointer hover:scale-110"
-                                            />
-                                            <span className="select-none sm:hidden">
-                                                Modo claro
-                                            </span>
-                                        </button>
-                                    )}
+                                        </Link>
 
-                                    <button
-                                        title="Sair"
-                                        className="flex gap-2 cursor-pointer max-sm:p-3 max-sm:w-full"
-                                        onClick={logoutUser}
-                                    >
-                                        <LogOut
-                                            strokeWidth={1.8}
-                                            className="w-5 h-5 transition-all ease-in-out cursor-pointer hover:scale-110"
-                                        />
-                                        <span className="select-none sm:hidden">
-                                            Sair
-                                        </span>
-                                    </button>
-                                </div>
+                                        <button
+                                            className="flex gap-2 cursor-pointer max-sm:p-3 max-sm:w-full hover:bg-black/5 transition-colors"
+                                            onClick={handleToggleTheme}
+                                        >
+                                            {theme === "light" ? (
+                                                <MoonIcon
+                                                    strokeWidth={1.8}
+                                                    className="w-5 h-5"
+                                                />
+                                            ) : (
+                                                <SunIcon
+                                                    strokeWidth={1.8}
+                                                    className="w-5 h-5"
+                                                />
+                                            )}
+                                            <span className="sm:hidden">
+                                                {theme === "light"
+                                                    ? "Modo escuro"
+                                                    : "Modo claro"}
+                                            </span>
+                                        </button>
+
+                                        <button
+                                            className="flex gap-2 cursor-pointer max-sm:p-3 max-sm:w-full hover:bg-black/5 transition-colors"
+                                            onClick={logoutUser}
+                                        >
+                                            <LogOut
+                                                strokeWidth={1.8}
+                                                className="w-5 h-5"
+                                            />
+                                            <span className="sm:hidden">
+                                                Sair
+                                            </span>
+                                        </button>
+                                    </motion.div>
+                                )}
                             </div>
                         </div>
                     </div>
                     {/* Middle text */}
-                    <div className="flex flex-col gap-5 md:gap-3">
+                    <ContainerFadeAnimation
+                        initialDelay={0.3}
+                        className="flex flex-col gap-5 md:gap-3"
+                    >
                         <h1 className="text-4xl font-black leading-8 text-darkPurple">
                             Tabuada do Glécio
                         </h1>
@@ -238,9 +271,13 @@ function Home() {
                                 </ButtonPrimary>
                             </Link>
                         </div>
-                    </div>
+                    </ContainerFadeAnimation>
                 </div>
-                {windowWidth >= 768 && <RankingList />}
+                {windowWidth >= 768 && (
+                    <ContainerFadeAnimation initialDelay={0.6}>
+                        <RankingList />
+                    </ContainerFadeAnimation>
+                )}
             </motion.main>
             <AnimatePresence mode="wait">
                 {mobileDropDown && (

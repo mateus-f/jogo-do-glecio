@@ -148,7 +148,7 @@ function Register() {
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                variants={fade()}
+                variants={fade}
             >
                 <div className="w-1/2 h-screen max-sm:hidden bg-gradient-to-b from-darkPurple to-purple"></div>
                 <main className="flex items-center justify-center w-1/2 h-screen py-4 overflow-y-auto max-sm:w-full max-sm:items-start max-sm:py-6">

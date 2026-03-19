@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import Confetti from "react-confetti";
 import { useEffect, useState, useRef } from "react";
 import { getLocalUserInfo } from "../utils/userUtils";
-import { scrollFromRight } from "../animations/pageAnimations";
+import { fade, scrollFromRight } from "../animations/pageAnimations";
 import { useOverlay } from "../contexts/TimerOverlayProvider";
 import ButtonPageBack from "../components/buttons/ButtonPageBack";
 import { HiStar } from "react-icons/hi";
@@ -12,6 +12,7 @@ import ButtonSupport from "../components/buttons/ButtonSupport";
 import ButtonSuccess from "../components/buttons/ButtonSuccess";
 import RankingList from "../components/RankingList";
 import CounterAnimation from "../animations/components/CounterAnimation"
+import LettersPullUpAnimation from "../animations/components/LettersPullUpAnimation"
 import { Howl } from "howler";
 
 import greenHappyFace from "../assets/images/elements/green-happy-face.svg";
@@ -79,7 +80,7 @@ function Result() {
     return (
         <>
             <motion.div
-                variants={scrollFromRight()}
+                variants={fade}
                 initial="initial"
                 animate="animate"
                 exit="exit"
@@ -92,16 +93,15 @@ function Result() {
                     
                     <div className="flex flex-col items-center justify-center w-full gap-8 md:w-1/2 lg:w-2/3">
                         <div className="flex flex-col items-center gap-2">
-                            <h2 className="mb-2 text-4xl font-black leading-8 text-center text-darkPurple">
-                                Tempo Esgotado!
-                            </h2>
+                            <LettersPullUpAnimation text="Tempo Esgotado!" initialDelay={1} className="mb-2 text-4xl font-black leading-8 text-center text-darkPurple" />
+                              
                             
                             {/* Bloco da Pontuação Final em destaque */}
                             <div className="flex flex-col items-center justify-center mt-2 p-6 bg-surface border-2 border-borderColor rounded-2xl w-full max-w-sm shadow-sm">
                                 <span className="text-lg font-medium text-darkGray mb-1">
                                     Pontuação Final
                                 </span>
-                                <CounterAnimation value={finalScore} className={`text-6xl font-black ${finalScore < 0 ? 'text-redColor' : 'text-darkPurple'}`} />
+                                <CounterAnimation value={finalScore} initialDelay={1} className={`text-6xl font-black ${finalScore < 0 ? 'text-redColor' : 'text-darkPurple'}`} />
                             </div>
                         </div>
                         
@@ -111,7 +111,7 @@ function Result() {
                                 <img
                                     src={greenHappyFace}
                                     alt={`${greenHappyFace}'s image`}
-                                    className="pointer-events-none select-none h-[100px] max-sm:h-20 max-[580px]:h-16"
+                                    className="pointer-events-none select-none h-20 max-sm:h-20 max-[580px]:h-16"
                                 />
                                 <div className="flex flex-col">
                                     <span className="text-greenColor font-extrabold text-4xl leading-6 max-[580px]:text-xl max-[580px]:leading-3">
@@ -127,7 +127,7 @@ function Result() {
                                 <img
                                     src={redSadFace}
                                     alt={`${redSadFace}'s image`}
-                                    className="pointer-events-none select-none h-[100px] max-sm:h-20 max-[580px]:h-16"
+                                    className="pointer-events-none select-none h-20 max-sm:h-20 max-[580px]:h-16"
                                 />
                                 <div className="flex flex-col">
                                     <span className="text-redColor font-extrabold text-4xl leading-6 max-[580px]:text-xl max-[580px]:leading-3">
@@ -140,9 +140,9 @@ function Result() {
                             </div>
                         </div>
 
-                        <p className="flex items-center justify-center gap-1 text-lg text-darkGray">
-                            <HiStar className="w-6 h-6" />
-                            Maior pontuação: {localStorage.getItem("MAX_SCORE")}
+                        <p className="flex items-center justify-center align-middle gap-1 text-lg text-darkGray">
+                            <HiStar className="w-6 h-6 relative bottom-[1px]" />
+                            Maior pontuação: {getLocalUserInfo().maxScore || 0}
                         </p>
 
                         <div className="flex gap-2 w-full justify-center max-[480px]:flex-col max-[480px]:items-center">

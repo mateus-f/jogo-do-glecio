@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import { scrollFromLeft } from "../animations/pageAnimations";
+import { fade, scrollFromLeft } from "../animations/pageAnimations";
 import ButtonPageBack from "../components/buttons/ButtonPageBack";
 import ButtonSuccess from "../components/buttons/ButtonSuccess";
 import Input from "../components/Input";
@@ -68,7 +68,7 @@ function ChangePassword() {
 
     return (
         <motion.div
-            variants={scrollFromLeft()}
+            variants={fade}
             initial="initial"
             animate="animate"
             exit="exit"

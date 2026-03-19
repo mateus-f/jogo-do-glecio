@@ -328,7 +328,7 @@ function RankingList() {
                                 >
                                     <motion.div
                                         key={`${activeTab}-${item.user.id}-${index}`}
-                                        variants={fade()}
+                                        variants={fade}
                                         initial="initial"
                                         animate="animate"
                                         exit="exit"
@@ -336,7 +336,7 @@ function RankingList() {
                                     >
                                         <div className="flex items-center min-w-0">
                                             <span
-                                                className={`min-w-6 ${getRankGradient(index)} ${
+                                                className={`w-7 ${getRankGradient(index)} ${
                                                     item.user.id == userInfo.id
                                                         ? "text-purpleSecondary"
                                                         : ""

@@ -67,7 +67,7 @@ function Login() {
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                variants={fade()}
+                variants={fade}
             >
                 <main className="flex items-center justify-center w-1/2 h-screen max-sm:w-full max-sm:items-start">
                     <div className="w-full max-w-md p-8 space-y-16 max-sm:space-y-8">
