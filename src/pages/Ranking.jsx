@@ -2,7 +2,7 @@ import { useNavigate } from "react-router";
 import RankingList from "../components/RankingList";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { scrollFromRight } from "../animations/pageAnimations";
+import { fade, scrollFromRight } from "../animations/pageAnimations";
 import ButtonPageBack from "../components/buttons/ButtonPageBack";
 
 function Ranking() {
@@ -31,7 +31,7 @@ function Ranking() {
             initial="initial"
             animate="animate"
             exit="exit"
-            variants={scrollFromRight()}
+            variants={fade}
             onAnimationComplete={() =>
                 document.body.classList.remove("no-scroll")
             }

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { scrollFromRight } from "../animations/pageAnimations";
+import { fade, scrollFromRight } from "../animations/pageAnimations";
 import Input from "../components/Input";
 import ButtonPageBack from "../components/buttons/ButtonPageBack";
 import ButtonPrimary from "../components/buttons/ButtonPrimary";
@@ -57,7 +57,7 @@ function ResetPasswordRequest() {
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                variants={scrollFromRight()}
+                variants={fade}
             >
                 <ButtonPageBack to="/login" replace={true} absolute={true}>
                     Retornar

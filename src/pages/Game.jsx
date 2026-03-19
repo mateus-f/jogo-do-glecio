@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { HiMiniChevronLeft } from "react-icons/hi2";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import { scrollFromRight } from "../animations/pageAnimations";
+import { fade, scrollFromRight } from "../animations/pageAnimations";
 import { getLocalUserInfo, setMaxScore } from "../utils/userUtils";
 import Modal from "../components/Modal";
 import { useOverlay } from "../contexts/TimerOverlayProvider";
 import { setRanking } from "../services/rankingService";
 import { Howl } from "howler";
+import ContainerFadeAnimation from "../animations/components/ContainerFadeAnimation";
 
 import greenHappyFace from "../assets/images/elements/green-happy-face.svg";
 import redSadFace from "../assets/images/elements/red-sad-face.svg";
@@ -24,8 +25,6 @@ function Game() {
     const [showModal, setShowModal] = useState(false);
     const [showConfettiInResultPage, setShowConfettiInResultPage] =
         useState(false);
-    const [multiplicationScaleAnimation, setMultiplicationScaleAnimation] =
-        useState(false);
 
     const [progress, setProgress] = useState(100);
     const [isRunning, setIsRunning] = useState(true);
@@ -35,9 +34,6 @@ function Game() {
     const [userResponse, setUserResponse] = useState("");
     const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
     const [wrongAnswersCount, setWrongAnswersCount] = useState(0);
-    const [lastMultiplication, setLastMultiplication] = useState({
-        multiplication: "",
-    });
     const [currentMultiplication, setCurrentMultiplication] = useState({
         multiplication: "0 x 0",
     });
@@ -46,11 +42,11 @@ function Game() {
 
     const correctSoundEffect = new Howl({
         src: [correctSound],
-        volume: 1,
+        volume: 0.5,
     });
     const wrongSoundEffect = new Howl({
         src: [wrongSound],
-        volume: 1,
+        volume: 0.5,
     });
     const timerSoundEffect = new Howl({
         src: timerSound,
@@ -73,11 +69,11 @@ function Game() {
             correctSoundEffect.play();
         } else {
             wrongSoundEffect.play();
-            //navigator.vibrate(100)
+            if (navigator.vibrate) {
+                navigator.vibrate(100);
+            }
             setWrongAnswersCount((prev) => prev + 1);
         }
-
-        setLastMultiplication(currentMultiplication);
 
         generateNewMultiplication();
         setUserResponse("");
@@ -91,19 +87,12 @@ function Game() {
             firstNumber = Math.floor(Math.random() * 8) + 2;
             secondNumber = Math.floor(Math.random() * 9) + 1;
             newMultiplication = `${firstNumber} x ${secondNumber}`;
-        } while (newMultiplication === lastMultiplication?.multiplication);
+        } while (newMultiplication === currentMultiplication?.multiplication);
 
         setCurrentMultiplication({
             multiplication: newMultiplication,
             result: firstNumber * secondNumber,
         });
-
-        setMultiplicationScaleAnimation(true);
-        let timer = setTimeout(() => {
-            setMultiplicationScaleAnimation(false);
-        }, 200);
-
-        return () => clearTimeout(timer);
     };
 
     const handleNumericButtonClick = (num) => {
@@ -114,6 +103,7 @@ function Game() {
 
     const setRankingScore = async (score) => {
         try {
+            score = Math.max(score, 0);
             const response = await setRanking(score);
 
             if (response.status_code === 201) {
@@ -233,14 +223,14 @@ function Game() {
             initial="initial"
             animate="animate"
             exit="exit"
-            variants={scrollFromRight()}
+            variants={fade}
         >
             <span
                 onClick={() => setShowModal(true)}
                 className="flex cursor-pointer text-darkPurple items-center font-medium absolute top-8 left-14 max-sm:left-4 max-sm:top-4 z-10"
             >
                 <HiMiniChevronLeft size={24} />
-                Retornar
+                Sair
             </span>
 
             {/* main mantém as classes originais pro desktop. No mobile, usamos min-h-[100dvh] e flex-col para forçar os itens pro fundo */}
@@ -261,15 +251,18 @@ function Game() {
                     {/* Multiplicação e acertos/erros */}
                     <div className="flex flex-col justify-between w-[480px] max-[580px]:w-full max-[580px]:flex-1">
                         {/* A Conta: No mobile usamos flex-1 para ela crescer o máximo possível, empurrando Acertos/Erros para baixo */}
-                        <p
-                            className={`text-[192px] font-black text-darkPurple text-center max-lg:text-[160px] max-[810px]:text-9xl max-sm:text-8xl h-full aling max-[580px]:flex-1 max-[580px]:flex max-[580px]:items-center max-[580px]:justify-center max-[580px]:mb-2 transition-scale duration-150 ease-in-out ${
-                                multiplicationScaleAnimation
-                                    ? "scale-105"
-                                    : "scale-100"
-                            }`}
+
+                        <div
+                            className={`text-[192px] font-black text-darkPurple text-center max-lg:text-[160px] max-[810px]:text-9xl max-sm:text-8xl h-full aling max-[580px]:flex-1 max-[580px]:flex max-[580px]:items-center max-[580px]:justify-center max-[580px]:mb-2 transition-scale duration-150 ease-in-out`}
                         >
-                            {currentMultiplication.multiplication}
-                        </p>
+                            <ContainerFadeAnimation
+                                key={currentMultiplication.multiplication}
+                            >
+                                <span>
+                                    {currentMultiplication.multiplication}
+                                </span>
+                            </ContainerFadeAnimation>
+                        </div>
 
                         <div className="flex justify-evenly gap-4 max-[580px]:justify-between max-[580px]:pb-2">
                             <div className="flex gap-2 items-center">
@@ -305,7 +298,6 @@ function Game() {
                         </div>
                     </div>
 
-                    {/* Teclado: Isolamos o pb-6 aqui pro celular pra nunca colar na borda de baixo da tela */}
                     <div className="max-w-[450px] max-[580px]:max-w-full max-[580px]:w-full max-[580px]:pb-6 max-[580px]:shrink-0">
                         <input
                             className="w-full text-lg text-purpleDarkGray bg-surface drop-shadow-md font-medium p-4 border border-grayColor outline-none rounded-xl mb-2 max-[580px]:p-3"
@@ -320,7 +312,7 @@ function Game() {
                                 (num) => (
                                     <button
                                         key={num}
-                                        className="w-full h-full bg-darkPurple drop-shadow-md rounded-xl text-surface dark:text-purpleDarkGray font-semibold text-4xl shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
+                                        className="w-full h-full bg-darkPurple drop-shadow-md rounded-xl text-surface dark:text-purpleDarkGray font-semibold text-4xl shadow-sm md:hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
                                         onPointerDown={(e) => {
                                             e.preventDefault();
                                             handleNumericButtonClick(num);
@@ -331,7 +323,7 @@ function Game() {
                                 ),
                             )}
                             <button
-                                className="w-full h-full bg-redColor rounded-xl text-surface dark:text-purpleDarkGray flex items-center justify-center shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
+                                className="w-full h-full bg-redColor rounded-xl text-surface dark:text-purpleDarkGray flex items-center justify-center shadow-sm md:hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
                                 onPointerDown={(e) => {
                                     e.preventDefault();
                                     setUserResponse((prev) =>
@@ -342,7 +334,7 @@ function Game() {
                                 <Delete className="w-10 h-10" />
                             </button>
                             <button
-                                className="w-full h-full bg-darkPurple rounded-xl text-surface dark:text-purpleDarkGray font-semibold text-4xl shadow-sm hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
+                                className="w-full h-full bg-darkPurple rounded-xl text-surface dark:text-purpleDarkGray font-semibold text-4xl shadow-sm md:hover:scale-95 active:scale-90 touch-manipulation select-none transition-all ease-in-out"
                                 onPointerDown={(e) => {
                                     e.preventDefault();
                                     handleNumericButtonClick("0");
